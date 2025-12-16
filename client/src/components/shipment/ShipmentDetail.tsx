@@ -94,8 +94,18 @@ function ShipmentDetailContent({ currentShipment }: { currentShipment: ShipmentD
   const progress = calculateProgress(currentShipment);
   const incompleteTasks = useMemo(() => getIncompleteTasks(currentShipment), [currentShipment]);
 
-  const handleScrollToMissed = () => {
-    const phasesSection = document.getElementById('phases-section');
+  const getPhaseForTask = (taskId: string): string => {
+    // Check which phase the task belongs to
+    if (phase1Mapped.some(t => t.id === taskId)) return 'phase-1';
+    if (fumigationMapped.some(t => t.id === taskId)) return 'phase-2';
+    if (phase3Mapped.some(t => t.id === taskId)) return 'phase-3';
+    if (forwarderMapped.some(t => t.id === taskId)) return 'phase-4';
+    return 'phases-section';
+  };
+
+  const handleScrollToMissed = (taskId?: string) => {
+    const targetPhase = taskId ? getPhaseForTask(taskId) : 'phases-section';
+    const phasesSection = document.getElementById(targetPhase);
     if (phasesSection) {
       phasesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -184,22 +194,26 @@ function ShipmentDetailContent({ currentShipment }: { currentShipment: ShipmentD
             {/* Widgets Column */}
             <div className="md:col-span-1 space-y-6">
                 {/* Donut Chart Widget */}
-                <div className="bg-card p-6 rounded-lg border shadow-sm flex flex-col items-center justify-center cursor-pointer hover:shadow-md transition-shadow" onClick={handleScrollToMissed}>
+                <div className="bg-card p-6 rounded-lg border shadow-sm flex flex-col items-center justify-center cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleScrollToMissed()}>
                     <DonutProgress percentage={progress} missedCount={incompleteTasks.length} />
                 </div>
 
                 {/* Missed Tasks Widget */}
                 {incompleteTasks.length > 0 && (
-                  <div className="bg-card p-4 rounded-lg border shadow-sm cursor-pointer hover:shadow-md hover:border-warning/50 transition-all" onClick={handleScrollToMissed}>
+                  <div className="bg-card p-4 rounded-lg border shadow-sm">
                     <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">Missed Tasks ({incompleteTasks.length})</h3>
                     <div className="space-y-2 max-h-48 overflow-y-auto">
                       {incompleteTasks.map((task) => (
-                        <div key={task.id} className="text-xs p-2 bg-muted/30 rounded border-l-2 border-l-warning">
+                        <div 
+                          key={task.id} 
+                          className="text-xs p-2 bg-muted/30 rounded border-l-2 border-l-warning cursor-pointer hover:bg-muted/50 transition-colors"
+                          onClick={() => handleScrollToMissed(task.id)}
+                        >
                           <div className="font-medium text-foreground">{task.label}</div>
                         </div>
                       ))}
                     </div>
-                    <div className="text-xs text-muted-foreground mt-3 text-center">Click to view in checklist</div>
+                    <div className="text-xs text-muted-foreground mt-3 text-center">Click any task to view</div>
                   </div>
                 )}
 
@@ -485,45 +499,53 @@ function ShipmentDetailContent({ currentShipment }: { currentShipment: ShipmentD
                 <div className="space-y-6" id="phases-section">
                 {currentShipment.shipmentType === 'with-inspection' && (
                     <>
-                    <PhaseSection 
-                        title="Phase 1: Pre-Inspection" 
-                        phaseId="p1" 
-                        tasks={phase1Mapped}
-                        checklistState={currentShipment.checklist}
-                        onToggle={(key) => toggleChecklist(currentShipment.id, key)}
-                        progress={calculatePhaseProgress(currentShipment, phase1Mapped)}
-                        missedTaskIds={incompleteTasks.map(t => t.id)}
-                    />
-                    <PhaseSection 
-                        title={`Phase 2: Clearance & Fumigation (${getFumigationDisplayName()})`}
-                        phaseId="p2" 
-                        tasks={fumigationMapped}
-                        checklistState={currentShipment.checklist}
-                        onToggle={(key) => toggleChecklist(currentShipment.id, key)}
-                        progress={calculatePhaseProgress(currentShipment, fumigationMapped)}
-                        missedTaskIds={incompleteTasks.map(t => t.id)}
-                    />
-                    <PhaseSection 
-                        title="Phase 3: COC Finalization" 
-                        phaseId="p3" 
-                        tasks={phase3Mapped}
-                        checklistState={currentShipment.checklist}
-                        onToggle={(key) => toggleChecklist(currentShipment.id, key)}
-                        progress={calculatePhaseProgress(currentShipment, phase3Mapped)}
-                        missedTaskIds={incompleteTasks.map(t => t.id)}
-                    />
+                    <div id="phase-1">
+                      <PhaseSection 
+                          title="Phase 1: Pre-Inspection" 
+                          phaseId="p1" 
+                          tasks={phase1Mapped}
+                          checklistState={currentShipment.checklist}
+                          onToggle={(key) => toggleChecklist(currentShipment.id, key)}
+                          progress={calculatePhaseProgress(currentShipment, phase1Mapped)}
+                          missedTaskIds={incompleteTasks.map(t => t.id)}
+                      />
+                    </div>
+                    <div id="phase-2">
+                      <PhaseSection 
+                          title={`Phase 2: Clearance & Fumigation (${getFumigationDisplayName()})`}
+                          phaseId="p2" 
+                          tasks={fumigationMapped}
+                          checklistState={currentShipment.checklist}
+                          onToggle={(key) => toggleChecklist(currentShipment.id, key)}
+                          progress={calculatePhaseProgress(currentShipment, fumigationMapped)}
+                          missedTaskIds={incompleteTasks.map(t => t.id)}
+                      />
+                    </div>
+                    <div id="phase-3">
+                      <PhaseSection 
+                          title="Phase 3: COC Finalization" 
+                          phaseId="p3" 
+                          tasks={phase3Mapped}
+                          checklistState={currentShipment.checklist}
+                          onToggle={(key) => toggleChecklist(currentShipment.id, key)}
+                          progress={calculatePhaseProgress(currentShipment, phase3Mapped)}
+                          missedTaskIds={incompleteTasks.map(t => t.id)}
+                      />
+                    </div>
                     </>
                 )}
                 
-                <PhaseSection 
-                    title={`Phase 4: Forwarding (${getForwarderDisplayName()})`}
-                    phaseId="p4"
-                    tasks={forwarderMapped}
-                    checklistState={currentShipment.checklist}
-                    onToggle={(key) => toggleChecklist(currentShipment.id, key)}
-                    progress={calculatePhaseProgress(currentShipment, forwarderMapped)}
-                    missedTaskIds={incompleteTasks.map(t => t.id)}
-                />
+                <div id="phase-4">
+                  <PhaseSection 
+                      title={`Phase 4: Forwarding (${getForwarderDisplayName()})`}
+                      phaseId="p4"
+                      tasks={forwarderMapped}
+                      checklistState={currentShipment.checklist}
+                      onToggle={(key) => toggleChecklist(currentShipment.id, key)}
+                      progress={calculatePhaseProgress(currentShipment, forwarderMapped)}
+                      missedTaskIds={incompleteTasks.map(t => t.id)}
+                  />
+                </div>
 
                 {/* Custom Tasks Section */}
                 <div className="mb-6 border rounded-lg overflow-hidden bg-card shadow-sm">
