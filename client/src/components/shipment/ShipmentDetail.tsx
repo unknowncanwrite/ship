@@ -307,10 +307,6 @@ function ShipmentDetailContent({ currentShipment }: { currentShipment: ShipmentD
                     <Input id="proforma" value={currentShipment.details.proforma} onChange={(e) => handleInputChange('details', 'proforma', e.target.value)} className="font-mono uppercase" />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="commercialInv" className="text-xs text-muted-foreground uppercase font-bold">Commercial Inv.</Label>
-                    <Input id="commercialInv" value={currentShipment.details.commercialInv} onChange={(e) => handleInputChange('details', 'commercialInv', e.target.value)} className="font-mono uppercase" />
-                </div>
-                <div className="space-y-2">
                     <Label htmlFor="container" className="text-xs text-muted-foreground uppercase font-bold">Container No.</Label>
                     <Input id="container" value={currentShipment.details.container} onChange={(e) => handleInputChange('details', 'container', e.target.value)} className="font-mono uppercase" />
                 </div>
