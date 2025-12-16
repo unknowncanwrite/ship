@@ -48,13 +48,16 @@ export function getIncompleteTasks(data: ShipmentData): TaskDefinition[] {
     allTasks = [
       ...allTasks,
       ...PHASE_1_TASKS,
-      ...PHASE_2_TASKS,
-      ...PHASE_3_TASKS
     ];
   }
 
+  // Use fumigation tasks instead of PHASE_2_TASKS
   const fumigationTasks = getFumigationTasks(data);
   allTasks = [...allTasks, ...fumigationTasks];
+
+  if (data.shipmentType === 'with-inspection') {
+    allTasks = [...allTasks, ...PHASE_3_TASKS];
+  }
 
   const forwarderTasks = getForwarderTasks(data);
   allTasks = [...allTasks, ...forwarderTasks];
