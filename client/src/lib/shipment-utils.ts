@@ -1,5 +1,5 @@
 import { ShipmentData } from "@/types/shipment";
-import { PHASE_1_TASKS, PHASE_2_TASKS, PHASE_3_TASKS, getForwarderTasks, TaskDefinition } from "./shipment-definitions";
+import { PHASE_1_TASKS, PHASE_2_TASKS, PHASE_3_TASKS, getForwarderTasks, getFumigationTasks, TaskDefinition } from "./shipment-definitions";
 
 export function calculateProgress(data: ShipmentData): number {
   let allTasks: string[] = [];
@@ -39,4 +39,25 @@ export function calculatePhaseProgress(data: ShipmentData, tasks: TaskDefinition
   
   const completedCount = tasks.filter(task => data.checklist[task.id]).length;
   return Math.round((completedCount / tasks.length) * 100);
+}
+
+export function getIncompleteTasks(data: ShipmentData): TaskDefinition[] {
+  let allTasks: TaskDefinition[] = [];
+
+  if (data.shipmentType === 'with-inspection') {
+    allTasks = [
+      ...allTasks,
+      ...PHASE_1_TASKS,
+      ...PHASE_2_TASKS,
+      ...PHASE_3_TASKS
+    ];
+  }
+
+  const fumigationTasks = getFumigationTasks(data);
+  allTasks = [...allTasks, ...fumigationTasks];
+
+  const forwarderTasks = getForwarderTasks(data);
+  allTasks = [...allTasks, ...forwarderTasks];
+
+  return allTasks.filter(task => !data.checklist[task.id]);
 }

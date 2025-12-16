@@ -16,7 +16,7 @@ import DonutProgress from './DonutProgress';
 import { useTheme } from 'next-themes';
 import { printDeclaration, printUndertaking, printShoesUndertaking } from '@/lib/PrintTemplates';
 import { format } from 'date-fns';
-import { calculateProgress, calculatePhaseProgress } from '@/lib/shipment-utils';
+import { calculateProgress, calculatePhaseProgress, getIncompleteTasks } from '@/lib/shipment-utils';
 import { PHASE_1_TASKS, PHASE_2_TASKS, PHASE_3_TASKS, getForwarderTasks, getFumigationTasks, TaskDefinition } from '@/lib/shipment-definitions';
 import { ShipmentData } from '@/types/shipment';
 
@@ -92,6 +92,7 @@ function ShipmentDetailContent({ currentShipment }: { currentShipment: ShipmentD
   }, [currentShipment.details.inspectionDate]);
 
   const progress = calculateProgress(currentShipment);
+  const incompleteTasks = useMemo(() => getIncompleteTasks(currentShipment), [currentShipment]);
 
   // Helper to map tasks with dynamic email content
   const mapTasks = (tasks: TaskDefinition[], data: ShipmentData) => {
@@ -172,6 +173,20 @@ function ShipmentDetailContent({ currentShipment }: { currentShipment: ShipmentD
                 <div className="bg-card p-6 rounded-lg border shadow-sm flex flex-col items-center justify-center">
                     <DonutProgress percentage={progress} />
                 </div>
+
+                {/* Missed Tasks Widget */}
+                {incompleteTasks.length > 0 && (
+                  <div className="bg-card p-4 rounded-lg border shadow-sm">
+                    <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">Missed Tasks ({incompleteTasks.length})</h3>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {incompleteTasks.map((task) => (
+                        <div key={task.id} className="text-xs p-2 bg-muted/30 rounded border-l-2 border-l-warning">
+                          <div className="font-medium text-foreground">{task.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Countdown Widget */}
                 <div className={`p-6 rounded-lg border shadow-sm flex flex-col items-center justify-center gap-2 ${countdown.bg}`}>
