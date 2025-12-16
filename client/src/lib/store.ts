@@ -103,7 +103,7 @@ export const useShipmentStore = create<ShipmentStore>()(
               isSaving: false,
             };
           });
-        }, 500);
+        }, 1000);
       },
 
       deleteShipment: (id) => {
