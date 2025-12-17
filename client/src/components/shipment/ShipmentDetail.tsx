@@ -459,7 +459,7 @@ function ShipmentDetailContent({ currentShipment }: { currentShipment: ShipmentD
                 </div>
                 {currentShipment.shipmentType === 'with-inspection' && (
                     <div className="space-y-2">
-                        <Label htmlFor="idf" className="text-xs text-muted-foreground uppercase font-bold">IDF Number</Label>
+                        <Label htmlFor="idf" className="text-xs text-muted-foreground uppercase font-bold">IDF Number / PART</Label>
                         <Input id="idf" value={details.idf} onChange={(e) => handleDetailChange('idf', e.target.value)} className="font-mono uppercase" />
                     </div>
                 )}
