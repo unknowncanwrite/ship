@@ -100,39 +100,21 @@ export const getForwarderTasks = (data: ShipmentData): TaskDefinition[] => {
 };
 
 export const getFumigationTasks = (data: ShipmentData): TaskDefinition[] => {
-  if (data.fumigation === 'sky-services') {
-    return [
-       { 
-         id: 'p2_sky_docs', 
-         label: 'Sky Services: Send Required Docs for Fumigation Certificate', 
-         hasEmail: true,
-         needsAttachmentCheck: true,
-         emailSubject: (d) => `Fumigation Certificate Request - ${d.id}`, 
-         emailBody: () => `Please find attached the required documents for fumigation certificate processing. Kindly arrange the fumigation certificate at your earliest convenience.` 
-       },
-       { id: 'p2_fum_cert_verify', label: 'Receive & Verify Fumigation Certificate as per Documents' }
-    ];
-  } else if (data.fumigation === 'sgs') {
-    return [
-       { id: 'p2_sgs_booking', label: 'SGS: Initiate Fumigation' },
-       { 
-         id: 'p2_sgs_docs', 
-         label: 'SGS: Submit Documentation', 
-         hasEmail: true,
-         needsAttachmentCheck: true,
-         emailSubject: (d) => `SGS Fumigation - ${d.id}`, 
-         emailBody: () => `Please find attached the required documents for SGS fumigation.` 
-       },
-       { id: 'p2_sgs_confirm', label: 'SGS: Receive Fumigation Confirmation' },
-       { id: 'p2_fum_cert_verify', label: 'Receive & Verify Fumigation Certificate as per Documents' }
-    ];
-  } else {
-    const providerName = data.manualFumigationName || 'Fumigation Provider';
-    return [
-       { id: 'p2_manual_fum_contact', label: `${providerName}: Contact via ${data.manualFumigationMethod}`, needsAttachmentCheck: true },
-       { id: 'p2_manual_fum_docs', label: `${providerName}: Send Fumigation Documents` },
-       { id: 'p2_manual_fum_confirm', label: `${providerName}: Confirm Fumigation Completion` },
-       { id: 'p2_fum_cert_verify', label: 'Receive & Verify Fumigation Certificate as per Documents' }
-    ];
-  }
+  const providerName = data.fumigation === 'sky-services' 
+    ? 'Sky Services' 
+    : data.fumigation === 'sgs' 
+    ? 'SGS' 
+    : data.manualFumigationName || 'Fumigation Provider';
+    
+  return [
+    { 
+      id: 'p2_fum_docs', 
+      label: `${providerName}: Send Required Docs for Fumigation Certificate`, 
+      hasEmail: true,
+      needsAttachmentCheck: true,
+      emailSubject: (d) => `Fumigation Certificate Request - ${d.id}`, 
+      emailBody: () => `Please find attached the required documents for fumigation certificate processing. Kindly arrange the fumigation certificate at your earliest convenience.` 
+    },
+    { id: 'p2_fum_cert_verify', label: 'Receive & Verify Fumigation Certificate as per Documents' }
+  ];
 };
