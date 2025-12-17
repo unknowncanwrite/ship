@@ -1,5 +1,5 @@
 import { ShipmentData } from "@/types/shipment";
-import { getPhase1Tasks, PHASE_2_TASKS, PHASE_3_TASKS, getForwarderTasks, getFumigationTasks, TaskDefinition } from "./shipment-definitions";
+import { PHASE_1_TASKS, PHASE_2_TASKS, PHASE_3_TASKS, getForwarderTasks, getFumigationTasks, TaskDefinition } from "./shipment-definitions";
 
 export function calculateProgress(data: ShipmentData): number {
   let allTasks: string[] = [];
@@ -8,7 +8,7 @@ export function calculateProgress(data: ShipmentData): number {
   if (data.shipmentType === 'with-inspection') {
     allTasks = [
       ...allTasks,
-      ...getPhase1Tasks(data).map(t => t.id),
+      ...PHASE_1_TASKS.map(t => t.id),
       ...PHASE_2_TASKS.map(t => t.id),
       ...PHASE_3_TASKS.map(t => t.id)
     ];
@@ -47,7 +47,7 @@ export function getIncompleteTasks(data: ShipmentData): TaskDefinition[] {
   if (data.shipmentType === 'with-inspection') {
     allTasks = [
       ...allTasks,
-      ...getPhase1Tasks(data),
+      ...PHASE_1_TASKS,
     ];
   }
 

@@ -18,7 +18,7 @@ export interface TaskDefinition {
   needsAttachmentCheck?: boolean;
 }
 
-const PHASE_1_BASE_TASKS: TaskDefinition[] = [
+export const PHASE_1_TASKS: TaskDefinition[] = [
   { 
     id: 'p1_docs', 
     label: 'Prepare Inspection Documents & send to SGS', 
@@ -32,21 +32,8 @@ const PHASE_1_BASE_TASKS: TaskDefinition[] = [
 Please see attached Documents, kindly arrange inspection for ${formatDate(d.details.inspectionDate)}.
 Attached - RFC, declaration, IDF & Commercial Invoice.`
   },
+  { id: 'p1_fumigation', label: 'Book Fumigation (WhatsApp)', isWhatsApp: true, needsAttachmentCheck: true, emailTo: 'HASSAN SKY FUMIGATION (03332990665)' },
 ];
-
-export const getPhase1Tasks = (data: ShipmentData): TaskDefinition[] => {
-  const tasks = [...PHASE_1_BASE_TASKS];
-  if (data.fumigation === 'sky-services') {
-    tasks.push({ 
-      id: 'p1_fumigation', 
-      label: 'Book Fumigation (WhatsApp)', 
-      isWhatsApp: true, 
-      needsAttachmentCheck: true, 
-      emailTo: 'Contact: HASSAN SKY FUMIGATION (03332990665)' 
-    });
-  }
-  return tasks;
-};
 
 export const PHASE_2_TASKS: TaskDefinition[] = [
   { 
