@@ -42,6 +42,9 @@ export interface ShipmentData {
   // --- Custom Tasks ---
   customTasks: Array<{ id: string; text: string; completed: boolean }>;
 
+  // --- Documents ---
+  documents: Array<{ id: string; name: string; file: string; createdAt: number }>;
+
   // --- Checklist State (Boolean Map) ---
   // Must support ALL phases logic
   checklist: Record<string, boolean>;
@@ -88,5 +91,6 @@ export const initialShipmentData: ShipmentData = {
     invoiceSent: false,
   },
   customTasks: [],
+  documents: [],
   checklist: {},
 };

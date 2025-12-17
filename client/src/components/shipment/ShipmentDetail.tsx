@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, Save, Trash2, Printer, Moon, Sun, Clock, AlertCircle, Plus, X } from 'lucide-react';
+import { ArrowLeft, Save, Trash2, Printer, Moon, Sun, Clock, AlertCircle, Plus, X, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import PhaseSection from './PhaseSection';
 import DonutProgress from './DonutProgress';
@@ -40,10 +40,11 @@ const useDebouncedSave = (value: string, delay: number, onSave: (val: string) =>
 // Sub-component that safely receives non-null shipment data
 function ShipmentDetailContent({ currentShipment }: { currentShipment: ShipmentData }) {
   const [_, setLocation] = useLocation();
-  const { updateShipment, deleteShipment, toggleChecklist, isSaving, addCustomTask, deleteCustomTask, toggleCustomTask } = useShipmentStore();
+  const { updateShipment, deleteShipment, toggleChecklist, isSaving, addCustomTask, deleteCustomTask, toggleCustomTask, addDocument, deleteDocument } = useShipmentStore();
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
   const [newTaskInput, setNewTaskInput] = useState('');
+  const [newDocName, setNewDocName] = useState('');
   
   // Local states for all text input fields (prevents re-render during typing)
   const [details, setDetails] = useState(currentShipment.details);
@@ -126,6 +127,34 @@ function ShipmentDetailContent({ currentShipment }: { currentShipment: ShipmentD
       addCustomTask(currentShipment.id, newTaskInput.trim());
       setNewTaskInput('');
     }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.type !== 'application/pdf') {
+      toast({
+        title: "Invalid File",
+        description: "Please upload a PDF file only.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const fileContent = event.target?.result as string;
+      const docName = newDocName.trim() || file.name.replace('.pdf', '');
+      addDocument(currentShipment.id, docName, fileContent);
+      setNewDocName('');
+      (e.target as HTMLInputElement).value = '';
+      toast({
+        title: "Document Uploaded",
+        description: `${docName} has been added to this shipment.`,
+      });
+    };
+    reader.readAsDataURL(file);
   };
 
   // Countdown Logic
@@ -604,6 +633,66 @@ function ShipmentDetailContent({ currentShipment }: { currentShipment: ShipmentD
                       progress={calculatePhaseProgress(currentShipment, forwarderMapped)}
                       missedTaskIds={incompleteTasks.map(t => t.id)}
                   />
+                </div>
+
+                {/* Documents Section */}
+                <div className="mb-6 border rounded-lg overflow-hidden bg-card shadow-sm">
+                    <div className="bg-muted/30 px-4 py-3 border-b flex justify-between items-center">
+                        <h3 className="font-semibold text-lg text-primary">Shipment Documents</h3>
+                    </div>
+                    
+                    <div className="p-4 space-y-3">
+                        {currentShipment.documents.length > 0 ? (
+                            currentShipment.documents.map((doc) => (
+                                <div key={doc.id} className="flex items-center justify-between p-3 bg-muted/20 rounded-md border">
+                                    <div className="flex items-center gap-3">
+                                        <Download className="h-4 w-4 text-accent" />
+                                        <div>
+                                            <div className="font-medium text-sm">{doc.name}</div>
+                                            <div className="text-xs text-muted-foreground">{format(new Date(doc.createdAt), 'MMM d, yyyy')}</div>
+                                        </div>
+                                    </div>
+                                    <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="h-8 w-8 text-destructive"
+                                        onClick={() => {
+                                          deleteDocument(currentShipment.id, doc.id);
+                                          toast({
+                                            title: "Document Deleted",
+                                            description: `${doc.name} has been removed.`,
+                                          });
+                                        }}
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center py-4 text-muted-foreground text-sm italic">
+                                No documents uploaded yet.
+                            </div>
+                        )}
+
+                        <div className="pt-3 border-t space-y-2">
+                            <Input 
+                                placeholder="Document name (optional)" 
+                                value={newDocName}
+                                onChange={(e) => setNewDocName(e.target.value)}
+                                className="h-8 text-sm"
+                            />
+                            <label className="flex items-center justify-center gap-2 p-3 border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/30 transition-colors">
+                                <Plus className="h-4 w-4" />
+                                <span className="text-sm font-medium">Upload PDF</span>
+                                <input 
+                                    type="file" 
+                                    accept=".pdf" 
+                                    onChange={handleFileUpload}
+                                    className="hidden"
+                                />
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Custom Tasks Section */}

@@ -17,6 +17,8 @@ interface ShipmentStore {
   addCustomTask: (id: string, task: string) => void;
   toggleCustomTask: (id: string, taskId: string) => void;
   deleteCustomTask: (id: string, taskId: string) => void;
+  addDocument: (id: string, name: string, file: string) => void;
+  deleteDocument: (id: string, documentId: string) => void;
 }
 
 // Mock initial data
@@ -151,6 +153,29 @@ export const useShipmentStore = create<ShipmentStore>()(
 
         const newCustomTasks = shipment.customTasks.filter(t => t.id !== taskId);
         get().updateShipment(id, { customTasks: newCustomTasks });
+      },
+
+      addDocument: (id, name, file) => {
+        const shipment = get().shipments.find((s) => s.id === id);
+        if (!shipment) return;
+
+        const newDocument = {
+          id: Math.random().toString(36).substr(2, 9),
+          name,
+          file,
+          createdAt: Date.now(),
+        };
+
+        const newDocuments = [...shipment.documents, newDocument];
+        get().updateShipment(id, { documents: newDocuments });
+      },
+
+      deleteDocument: (id, documentId) => {
+        const shipment = get().shipments.find((s) => s.id === id);
+        if (!shipment) return;
+
+        const newDocuments = shipment.documents.filter(d => d.id !== documentId);
+        get().updateShipment(id, { documents: newDocuments });
       },
     }),
     {
