@@ -40,12 +40,11 @@ export default function PhaseSection({
 }: PhaseSectionProps) {
   const { toast } = useToast();
 
-  const copyToClipboard = (subject: string, body: string) => {
-    const text = `Subject: ${subject}\n\n${body}`;
+  const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: "Email Copied",
-      description: "Subject and body copied to clipboard.",
+      title: "Copied",
+      description: `${label} copied to clipboard.`,
     });
   };
 
@@ -95,9 +94,16 @@ export default function PhaseSection({
                   variant="ghost" 
                   size="sm" 
                   className="h-8 text-xs text-accent hover:text-accent hover:bg-accent/10"
-                  onClick={() => copyToClipboard(task.emailSubject || '', task.emailBody || '')}
+                  onClick={() => {
+                    const parts = [];
+                    if (task.emailTo) parts.push(`To: ${task.emailTo}`);
+                    if (task.emailCC) parts.push(`CC: ${task.emailCC}`);
+                    if (task.emailSubject) parts.push(`Subject: ${task.emailSubject}`);
+                    if (task.emailBody) parts.push(`Body:\n${task.emailBody}`);
+                    copyToClipboard(parts.join('\n\n'), 'Email');
+                  }}
                 >
-                  <Copy className="h-3 w-3 mr-1" /> Copy
+                  <Copy className="h-3 w-3 mr-1" /> Copy All
                 </Button>
               )}
             </div>
@@ -106,22 +112,62 @@ export default function PhaseSection({
               <div className="ml-7 space-y-2 p-3 bg-muted/30 rounded-md border border-muted text-xs">
                 {task.emailTo && (
                   <div className="space-y-1">
-                    <div className="font-bold text-muted-foreground uppercase">To:</div>
+                    <div className="flex items-center justify-between">
+                      <div className="font-bold text-muted-foreground uppercase">To:</div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 text-accent hover:text-accent hover:bg-accent/10"
+                        onClick={() => copyToClipboard(task.emailTo || '', 'To')}
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
                     <div className="text-foreground">{task.emailTo}</div>
                   </div>
                 )}
                 {task.emailCC && (
                   <div className="space-y-1">
-                    <div className="font-bold text-muted-foreground uppercase">CC:</div>
+                    <div className="flex items-center justify-between">
+                      <div className="font-bold text-muted-foreground uppercase">CC:</div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 text-accent hover:text-accent hover:bg-accent/10"
+                        onClick={() => copyToClipboard(task.emailCC || '', 'CC')}
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
                     <div className="text-foreground">{task.emailCC}</div>
                   </div>
                 )}
                 <div className="space-y-1">
-                  <div className="font-bold text-muted-foreground uppercase">Subject:</div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-bold text-muted-foreground uppercase">Subject:</div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 text-accent hover:text-accent hover:bg-accent/10"
+                      onClick={() => copyToClipboard(task.emailSubject || '', 'Subject')}
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
                   <div className="text-foreground">{task.emailSubject}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="font-bold text-muted-foreground uppercase">Body:</div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-bold text-muted-foreground uppercase">Body:</div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 text-accent hover:text-accent hover:bg-accent/10"
+                      onClick={() => copyToClipboard(task.emailBody || '', 'Body')}
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
                   <div className="text-foreground whitespace-pre-wrap">{task.emailBody}</div>
                 </div>
               </div>
