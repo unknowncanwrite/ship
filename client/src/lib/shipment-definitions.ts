@@ -71,32 +71,24 @@ export const PHASE_3_TASKS: TaskDefinition[] = [
 ];
 
 export const getForwarderTasks = (data: ShipmentData): TaskDefinition[] => {
-  if (data.forwarder === 'xpo') {
-    return [
-       { id: 'p4_xpo_booking', label: 'XPO: Confirm Booking' },
-       { id: 'p4_xpo_loading', label: 'XPO: Confirm Loading' },
-       { 
-         id: 'p4_xpo_docs', 
-         label: 'XPO: Send Final Docs', 
-         hasEmail: true,
-         needsAttachmentCheck: true,
-         emailSubject: (d) => `Final Docs - ${d.id}`, 
-         emailBody: () => `Please find attached final documents.` 
-       }
-    ];
-  } else if (data.forwarder === 'hmi') {
-    return [
-       { id: 'p4_hmi_whatsapp', label: 'HMI: Send WhatsApp Confirmation', isWhatsApp: true, needsAttachmentCheck: true },
-       { id: 'p4_hmi_loading', label: 'HMI: Confirm Loading' }
-    ];
-  } else {
-    const forwarderName = data.manualForwarderName || 'Forwarder';
-    const isEmail = data.manualMethod === 'email';
-    return [
-       { id: 'p4_manual_contact', label: `${forwarderName}: Contact via ${data.manualMethod}`, needsAttachmentCheck: true },
-       { id: 'p4_manual_docs', label: `${forwarderName}: Send Documents` }
-    ];
-  }
+  const forwarderName = data.forwarder === 'xpo' 
+    ? 'XPO' 
+    : data.forwarder === 'hmi' 
+    ? 'HMI' 
+    : data.manualForwarderName || 'Forwarder';
+    
+  return [
+    { id: 'p4_confirm_booking', label: `${forwarderName}: Confirm Booking` },
+    { id: 'p4_confirm_loading', label: `${forwarderName}: Confirm Loading` },
+    { 
+      id: 'p4_send_docs', 
+      label: `${forwarderName}: Send Final Docs`, 
+      hasEmail: true,
+      needsAttachmentCheck: true,
+      emailSubject: (d) => `Final Docs - ${d.id}`, 
+      emailBody: () => `Please find attached final documents.` 
+    }
+  ];
 };
 
 export const getFumigationTasks = (data: ShipmentData): TaskDefinition[] => {
