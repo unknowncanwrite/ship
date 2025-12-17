@@ -335,6 +335,64 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                     </div>
                 </div>
 
+                {/* Documents Section - Moved to Sidebar */}
+                <div className="bg-card p-4 rounded-lg border shadow-sm">
+                    <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">Shipment Documents</h3>
+                    
+                    <div className="space-y-2">
+                        {(currentShipment.documents || []).length > 0 ? (
+                            (currentShipment.documents || []).map((doc) => (
+                                <div key={doc.id} className="flex items-center justify-between p-2 bg-muted/20 rounded-md border text-xs">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <Download className="h-3 w-3 text-accent flex-shrink-0" />
+                                        <div className="min-w-0">
+                                            <div className="font-medium truncate">{doc.name}</div>
+                                            <div className="text-muted-foreground text-xs">{format(new Date(doc.createdAt), 'MMM d, yyyy')}</div>
+                                        </div>
+                                    </div>
+                                    <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="h-6 w-6 text-destructive flex-shrink-0"
+                                        onClick={() => {
+                                          deleteDocument(currentShipment.id, doc.id);
+                                          toast({
+                                            title: "Document Deleted",
+                                            description: `${doc.name} has been removed.`,
+                                          });
+                                        }}
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </Button>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center py-3 text-muted-foreground text-xs italic">
+                                No documents yet.
+                            </div>
+                        )}
+
+                        <div className="pt-2 border-t space-y-1">
+                            <Input 
+                                placeholder="Doc name (optional)" 
+                                value={newDocName}
+                                onChange={(e) => setNewDocName(e.target.value)}
+                                className="h-7 text-xs"
+                            />
+                            <label className="flex items-center justify-center gap-1 p-2 border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/30 transition-colors">
+                                <Plus className="h-3 w-3" />
+                                <span className="text-xs font-medium">Upload PDF</span>
+                                <input 
+                                    type="file" 
+                                    accept=".pdf" 
+                                    onChange={handleFileUpload}
+                                    className="hidden"
+                                />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Controls */}
                 <div className="bg-card p-4 rounded-lg border shadow-sm space-y-4">
                     <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Configuration</h3>
@@ -653,66 +711,6 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                       progress={calculatePhaseProgress(currentShipment, forwarderMapped)}
                       missedTaskIds={incompleteTasks.map(t => t.id)}
                   />
-                </div>
-
-                {/* Documents Section */}
-                <div className="mb-6 border rounded-lg overflow-hidden bg-card shadow-sm">
-                    <div className="bg-muted/30 px-4 py-3 border-b flex justify-between items-center">
-                        <h3 className="font-semibold text-lg text-primary">Shipment Documents</h3>
-                    </div>
-                    
-                    <div className="p-4 space-y-3">
-                        {(currentShipment.documents || []).length > 0 ? (
-                            (currentShipment.documents || []).map((doc) => (
-                                <div key={doc.id} className="flex items-center justify-between p-3 bg-muted/20 rounded-md border">
-                                    <div className="flex items-center gap-3">
-                                        <Download className="h-4 w-4 text-accent" />
-                                        <div>
-                                            <div className="font-medium text-sm">{doc.name}</div>
-                                            <div className="text-xs text-muted-foreground">{format(new Date(doc.createdAt), 'MMM d, yyyy')}</div>
-                                        </div>
-                                    </div>
-                                    <Button 
-                                        variant="ghost" 
-                                        size="icon" 
-                                        className="h-8 w-8 text-destructive"
-                                        onClick={() => {
-                                          deleteDocument(currentShipment.id, doc.id);
-                                          toast({
-                                            title: "Document Deleted",
-                                            description: `${doc.name} has been removed.`,
-                                          });
-                                        }}
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center py-4 text-muted-foreground text-sm italic">
-                                No documents uploaded yet.
-                            </div>
-                        )}
-
-                        <div className="pt-3 border-t space-y-2">
-                            <Input 
-                                placeholder="Document name (optional)" 
-                                value={newDocName}
-                                onChange={(e) => setNewDocName(e.target.value)}
-                                className="h-8 text-sm"
-                            />
-                            <label className="flex items-center justify-center gap-2 p-3 border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/30 transition-colors">
-                                <Plus className="h-4 w-4" />
-                                <span className="text-sm font-medium">Upload PDF</span>
-                                <input 
-                                    type="file" 
-                                    accept=".pdf" 
-                                    onChange={handleFileUpload}
-                                    className="hidden"
-                                />
-                            </label>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Custom Tasks Section */}
