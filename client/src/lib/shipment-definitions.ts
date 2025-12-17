@@ -95,11 +95,11 @@ export const getFumigationTasks = (data: ShipmentData): TaskDefinition[] => {
     return [
        { 
          id: 'p2_sky_docs', 
-         label: 'Sky Services: Send Required Docs', 
+         label: 'Sky Services: Send Required Docs for Fumigation Certificate', 
          hasEmail: true,
          needsAttachmentCheck: true,
-         emailSubject: (d) => `Fumigation Request - ${d.id}`, 
-         emailBody: () => `Please find attached the required documents for fumigation.` 
+         emailSubject: (d) => `Fumigation Certificate Request - ${d.id}`, 
+         emailBody: () => `Please find attached the required documents for fumigation certificate processing. Kindly arrange the fumigation certificate at your earliest convenience.` 
        }
     ];
   } else if (data.fumigation === 'sgs') {
