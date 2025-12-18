@@ -207,6 +207,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
       emailBody: typeof t.emailBody === 'function' ? t.emailBody(data) : t.emailBody,
       emailTo: typeof t.emailTo === 'function' ? t.emailTo(data) : t.emailTo,
       emailCC: typeof t.emailCC === 'function' ? t.emailCC(data) : t.emailCC,
+      whatsappBody: typeof t.whatsappBody === 'function' ? t.whatsappBody(data) : t.whatsappBody,
     }));
   };
 
