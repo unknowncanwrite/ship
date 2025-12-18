@@ -94,11 +94,6 @@ export default function PhaseSection({
                       Health Cert, Fumigation Cert, CI, PL, Declaration of Origin, Used Clothing & Shoes Undertakings
                     </div>
                   )}
-                  {task.note && (
-                    <div className="text-xs mt-1 text-muted-foreground italic bg-muted/20 p-2 rounded">
-                      📝 {task.note}
-                    </div>
-                  )}
                   {task.subTasks && task.subTasks.length > 0 && (
                     <div className="text-xs mt-2 ml-0 space-y-1">
                       {task.subTasks.map((subTask, idx) => (
@@ -181,6 +176,11 @@ export default function PhaseSection({
                   </div>
                   <div className="text-foreground">{task.emailSubject}</div>
                 </div>
+                )}
+                {task.note && (
+                  <div className="text-xs text-muted-foreground italic bg-muted/20 p-2 rounded border border-muted/50">
+                    {task.note}
+                  </div>
                 )}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
