@@ -52,7 +52,7 @@ export const PHASE_2_TASKS: TaskDefinition[] = [
 export const PHASE_3_TASKS: TaskDefinition[] = [
   { 
     id: 'p3_prepare_docs', 
-    label: 'PREPARE DOCUMENT: Health Cert, Fumigation Cert, CI, PL, Declaration of Origin, Used Clothing & Shoes Undertakings' 
+    label: 'PREPARE DOCUMENT: ⭐ Health Cert, Fumigation Cert, CI, PL, Declaration of Origin, Used Clothing & Shoes Undertakings ⭐'
   },
   { 
     id: 'p3a_sgs_docs', 
