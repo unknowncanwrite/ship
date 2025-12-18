@@ -68,8 +68,8 @@ export default function PhaseSection({
           const isMissed = missedTaskIds.includes(task.id);
           const isHighlighted = task.id === 'p3_prepare_docs';
           return (
-          <div key={task.id} className={`space-y-2 ${isMissed ? 'border-l-2 border-l-warning bg-warning/5 pl-3 py-2 rounded' : isHighlighted ? 'border-l-2 border-l-accent bg-accent/10 pl-3 py-2 rounded' : ''}`}>
-            <div className={`flex items-start justify-between group p-2 rounded-md hover:bg-muted/50 transition-colors ${isMissed ? 'border-l-4 border-l-warning/50 pl-1' : isHighlighted ? 'border-l-4 border-l-accent/50 pl-1' : ''}`}>
+          <div key={task.id} className={`space-y-2 ${isMissed ? 'border-l-2 border-l-warning bg-warning/5 pl-3 py-2 rounded' : ''}`}>
+            <div className={`flex items-start justify-between group p-2 rounded-md hover:bg-muted/50 transition-colors ${isMissed ? 'border-l-4 border-l-warning/50 pl-1' : ''}`}>
               <div className="flex items-start space-x-3 pt-1">
                 <Checkbox 
                   id={task.id} 
@@ -81,11 +81,16 @@ export default function PhaseSection({
                   <Label 
                     htmlFor={task.id}
                     className={`text-sm font-medium leading-none cursor-pointer ${
-                      checklistState[task.id] ? 'text-muted-foreground line-through decoration-muted-foreground/50' : isMissed ? 'text-warning font-semibold' : isHighlighted ? 'text-accent font-bold' : ''
+                      checklistState[task.id] ? 'text-muted-foreground line-through decoration-muted-foreground/50' : isMissed ? 'text-warning font-semibold' : ''
                     }`}
                   >
                     {task.label}
                   </Label>
+                  {isHighlighted && (
+                    <div className="text-sm mt-1 bg-accent/20 text-foreground p-2 rounded border border-accent/30">
+                      Health Cert, Fumigation Cert, CI, PL, Declaration of Origin, Used Clothing & Shoes Undertakings
+                    </div>
+                  )}
                   {isMissed && <div className="text-xs text-warning font-medium">⚠ Skipped</div>}
                 </div>
               </div>
