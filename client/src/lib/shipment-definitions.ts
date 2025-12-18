@@ -18,6 +18,7 @@ export interface TaskDefinition {
   needsAttachmentCheck?: boolean;
   note?: string;
   subTasks?: string[];
+  hideSubject?: boolean;
 }
 
 export const PHASE_1_TASKS: TaskDefinition[] = [
@@ -62,7 +63,8 @@ export const PHASE_3_TASKS: TaskDefinition[] = [
     hasEmail: true,
     needsAttachmentCheck: true,
     emailBody: () => `Please find attached shipment documents. Kindly prepare the COC draft at your earliest convenience.`,
-    note: 'Reply to the original SGS inspection email.'
+    note: 'Reply to the original SGS inspection email.',
+    hideSubject: true
   },
   { id: 'p3b_draft', label: 'Receive & Verify Draft' },
   { id: 'p3b_pay', label: 'Process SGS Payment' },

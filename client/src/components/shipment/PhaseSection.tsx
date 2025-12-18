@@ -19,6 +19,7 @@ interface Task {
   needsAttachmentCheck?: boolean;
   note?: string;
   subTasks?: string[];
+  hideSubject?: boolean;
 }
 
 interface PhaseSectionProps {
@@ -165,7 +166,7 @@ export default function PhaseSection({
                     <div className="text-foreground">{task.emailCC}</div>
                   </div>
                 )}
-                {phaseId !== 'phase_3' && (
+                {!task.hideSubject && (
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="font-bold text-muted-foreground uppercase">Subject:</div>
