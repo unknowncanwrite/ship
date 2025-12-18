@@ -108,6 +108,23 @@ Booking Number - ${d.details.booking}`,
 Container: ${d.details.container}
 BOOKING NUMBER: ${d.details.booking}`,
       subTasks: ['CONFIRM ATTACHMENT: BL DRAFT(WORD FILE)']
+    },
+    { 
+      id: 'p4_receive_verify_bl', 
+      label: 'Receive & Verify BL Draft'
+    },
+    { 
+      id: 'p4_bl_approved', 
+      label: 'Draft BL Approved - Once customer approves, reply to Forwarder',
+      hasEmail: true,
+      hideSubject: true,
+      note: 'Reply to the original Forwarder BL Draft email.',
+      emailBody: (d) => `Draft BL Approved for Container: ${d.details.container}, Booking: ${d.details.booking}
+Please proceed with the finalization`
+    },
+    { 
+      id: 'p4_final_bl', 
+      label: 'Final BL / Seaway Received'
     }
   ];
 };
