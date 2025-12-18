@@ -105,7 +105,8 @@ Against Container Number - ${d.details.container}
 Booking Number - ${d.details.booking}`,
       whatsappBody: (d) => `draft Bill of Lading (BL).
 Container: ${d.details.container}
-BOOKING NUMBER: ${d.details.booking}`
+BOOKING NUMBER: ${d.details.booking}`,
+      subTasks: ['CONFIRM ATTACHMENT: BL DRAFT(WORD FILE)']
     }
   ];
 };
