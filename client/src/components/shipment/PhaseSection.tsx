@@ -17,6 +17,8 @@ interface Task {
   emailCC?: string;
   isWhatsApp?: boolean;
   needsAttachmentCheck?: boolean;
+  note?: string;
+  subTasks?: string[];
 }
 
 interface PhaseSectionProps {
@@ -89,6 +91,21 @@ export default function PhaseSection({
                   {isHighlighted && (
                     <div className="text-sm mt-1 bg-accent/20 text-foreground p-2 rounded border border-accent/30">
                       Health Cert, Fumigation Cert, CI, PL, Declaration of Origin, Used Clothing & Shoes Undertakings
+                    </div>
+                  )}
+                  {task.note && (
+                    <div className="text-xs mt-1 text-muted-foreground italic bg-muted/20 p-2 rounded">
+                      📝 {task.note}
+                    </div>
+                  )}
+                  {task.subTasks && task.subTasks.length > 0 && (
+                    <div className="text-xs mt-2 ml-0 space-y-1">
+                      {task.subTasks.map((subTask, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-muted-foreground bg-muted/10 p-1.5 rounded">
+                          <span className="text-accent font-bold">✓</span>
+                          <span>{subTask}</span>
+                        </div>
+                      ))}
                     </div>
                   )}
                   {isMissed && <div className="text-xs text-warning font-medium">⚠ Skipped</div>}

@@ -16,6 +16,8 @@ export interface TaskDefinition {
   emailCC?: string | ((data: ShipmentData) => string);
   isWhatsApp?: boolean;
   needsAttachmentCheck?: boolean;
+  note?: string;
+  subTasks?: string[];
 }
 
 export const PHASE_1_TASKS: TaskDefinition[] = [
@@ -59,8 +61,8 @@ export const PHASE_3_TASKS: TaskDefinition[] = [
     label: 'Send Shipment Documents to SGS for COC Draft', 
     hasEmail: true,
     needsAttachmentCheck: true,
-    emailSubject: (d) => `Shipment Documents for COC Draft - ${d.id}`, 
-    emailBody: () => `Please find attached shipment documents. Kindly prepare the COC draft at your earliest convenience.` 
+    emailBody: () => `Please find attached shipment documents. Kindly prepare the COC draft at your earliest convenience.`,
+    note: 'Reply to the original SGS inspection email.'
   },
   { id: 'p3b_draft', label: 'Receive & Verify Draft' },
   { id: 'p3b_pay', label: 'Process SGS Payment' },
@@ -70,7 +72,8 @@ export const PHASE_3_TASKS: TaskDefinition[] = [
     hasEmail: true,
     needsAttachmentCheck: true,
     emailSubject: (d) => `COC Finalization - ${d.id}`, 
-    emailBody: () => `COC Draft Confirmed. Payment attached. Please issue Final.` 
+    emailBody: () => `COC Draft Confirmed. Payment attached. Please issue Final.`,
+    subTasks: ['CONFIRM ATTACHMENT: SGS PAYMENT INVOICE & SGS PAYMENT CHECK']
   },
 ];
 
