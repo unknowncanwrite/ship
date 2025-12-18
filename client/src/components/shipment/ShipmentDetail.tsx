@@ -17,7 +17,7 @@ import { useTheme } from 'next-themes';
 import { printDeclaration, printUndertaking, printShoesUndertaking } from '@/lib/PrintTemplates';
 import { format } from 'date-fns';
 import { calculateProgress, calculatePhaseProgress, getIncompleteTasks } from '@/lib/shipment-utils';
-import { PHASE_1_TASKS, PHASE_2_TASKS, PHASE_3_TASKS, getForwarderTasks, getFumigationTasks, TaskDefinition } from '@/lib/shipment-definitions';
+import { PHASE_1_TASKS, PHASE_2_TASKS, PHASE_3_TASKS, PHASE_5_TASKS, getForwarderTasks, getFumigationTasks, TaskDefinition } from '@/lib/shipment-definitions';
 import { ShipmentData } from '@/types/shipment';
 
 // Debounce hook for text input - fixed to prevent hook dependency issues
@@ -188,6 +188,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
     if (fumigationMapped.some(t => t.id === taskId)) return 'phase-2';
     if (phase3Mapped.some(t => t.id === taskId)) return 'phase-3';
     if (forwarderMapped.some(t => t.id === taskId)) return 'phase-4';
+    if (phase5Mapped.some(t => t.id === taskId)) return 'phase-5';
     return 'phases-section';
   };
 
@@ -216,6 +217,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
   const phase3Mapped = useMemo(() => mapTasks(PHASE_3_TASKS, currentShipment), [currentShipment]);
   const forwarderMapped = useMemo(() => mapTasks(getForwarderTasks(currentShipment), currentShipment), [currentShipment]);
   const fumigationMapped = useMemo(() => mapTasks(getFumigationTasks(currentShipment), currentShipment), [currentShipment]);
+  const phase5Mapped = useMemo(() => mapTasks(PHASE_5_TASKS, currentShipment), [currentShipment]);
 
   const getForwarderDisplayName = () => {
     if (currentShipment.forwarder === 'xpo') return 'XPO Logistics';
@@ -615,6 +617,18 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                       checklistState={currentShipment.checklist}
                       onToggle={(key) => toggleChecklist(currentShipment.id, key)}
                       progress={calculatePhaseProgress(currentShipment, forwarderMapped)}
+                      missedTaskIds={incompleteTasks.map(t => t.id)}
+                  />
+                </div>
+
+                <div id="phase-5">
+                  <PhaseSection 
+                      title="Phase 5: Final Delivery"
+                      phaseId="p5"
+                      tasks={phase5Mapped}
+                      checklistState={currentShipment.checklist}
+                      onToggle={(key) => toggleChecklist(currentShipment.id, key)}
+                      progress={calculatePhaseProgress(currentShipment, phase5Mapped)}
                       missedTaskIds={incompleteTasks.map(t => t.id)}
                   />
                 </div>

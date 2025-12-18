@@ -130,6 +130,27 @@ Please proceed with the finalization`
   ];
 };
 
+export const PHASE_5_TASKS: TaskDefinition[] = [
+  { 
+    id: 'p5_send_final_docs', 
+    label: 'Send Final Docs to Customer (After payment received confirmation)',
+    hasEmail: true,
+    needsAttachmentCheck: true,
+    emailSubject: (d) => `Final Shipment Documents - INV# ${d.commercial.invoice || d.id}`, 
+    emailBody: () => `Dear Customer,
+
+Please find attached all final shipment documents:
+- Final Certificate of Conformity (COC)
+- Commercial Invoice (CI)
+- Packing List (PL)
+- Fumigation Certificate
+- Seaway Bill / Bill of Lading
+
+Thank you for your business.`,
+    subTasks: ['Confirm Attachments: Final COC, CI, PL, Fumigation Cert, Seaway/BL']
+  }
+];
+
 export const getFumigationTasks = (data: ShipmentData): TaskDefinition[] => {
   const providerName = data.fumigation === 'sky-services' 
     ? 'Sky Services' 
