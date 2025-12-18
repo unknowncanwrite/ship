@@ -62,7 +62,7 @@ export const PHASE_3_TASKS: TaskDefinition[] = [
     label: 'Send Shipment Documents to SGS for COC Draft', 
     hasEmail: true,
     needsAttachmentCheck: true,
-    emailBody: () => `Please find attached shipment documents. Kindly prepare the COC draft at your earliest convenience.`,
+    emailBody: () => `Please see attached documents, and send payment invoice and COC Draft.`,
     note: 'Reply to the original SGS inspection email.',
     hideSubject: true
   },
