@@ -1,14 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Trash2, Plus, ArrowUpDown } from 'lucide-react';
+import { Trash2, Plus, ArrowUpDown, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-
-interface Note {
-  id: string;
-  name: string;
-  notes: string;
-}
+import { useNotes, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 
 interface NotesTableProps {
   open: boolean;
@@ -16,37 +11,67 @@ interface NotesTableProps {
 }
 
 export default function NotesTable({ open, onOpenChange }: NotesTableProps) {
-  const [notesList, setNotesList] = useState<Note[]>([
-    { id: '1', name: 'Project A', notes: 'Sample note' }
-  ]);
   const [newName, setNewName] = useState('');
   const [newNote, setNewNote] = useState('');
   const [sortAsc, setSortAsc] = useState(true);
+  const [editValues, setEditValues] = useState<Record<string, { name: string; notes: string }>>({});
 
-  const addNote = () => {
+  const { data: notes = [], isLoading } = useNotes();
+  const createNote = useCreateNote();
+  const updateNote = useUpdateNote();
+  const deleteNote = useDeleteNote();
+
+  // Initialize edit values when notes load
+  useEffect(() => {
+    const values: Record<string, { name: string; notes: string }> = {};
+    notes.forEach(note => {
+      if (!editValues[note.id]) {
+        values[note.id] = { name: note.name, notes: note.notes };
+      }
+    });
+    if (Object.keys(values).length > 0) {
+      setEditValues(prev => ({ ...prev, ...values }));
+    }
+  }, [notes]);
+
+  const handleAddNote = () => {
     if (newName.trim() && newNote.trim()) {
-      setNotesList([
-        ...notesList,
+      createNote.mutate(
+        { name: newName, notes: newNote },
         {
-          id: Date.now().toString(),
-          name: newName,
-          notes: newNote
+          onSuccess: () => {
+            setNewName('');
+            setNewNote('');
+          },
         }
-      ]);
-      setNewName('');
-      setNewNote('');
+      );
     }
   };
 
-  const updateNote = (id: string, field: 'name' | 'notes', value: string) => {
-    setNotesList(notesList.map(n => n.id === id ? { ...n, [field]: value } : n));
+  const handleUpdateNote = (id: string, field: 'name' | 'notes', value: string) => {
+    setEditValues(prev => ({
+      ...prev,
+      [id]: { ...prev[id], [field]: value }
+    }));
   };
 
-  const deleteNote = (id: string) => {
-    setNotesList(notesList.filter(n => n.id !== id));
+  const handleBlur = (id: string) => {
+    const edited = editValues[id];
+    const original = notes.find(n => n.id === id);
+    
+    if (edited && original && (edited.name !== original.name || edited.notes !== original.notes)) {
+      updateNote.mutate({
+        id,
+        data: { name: edited.name, notes: edited.notes }
+      });
+    }
   };
 
-  const sortedNotes = [...notesList].sort((a, b) => {
+  const handleDelete = (id: string) => {
+    deleteNote.mutate(id);
+  };
+
+  const sortedNotes = [...notes].sort((a, b) => {
     const comparison = a.name.localeCompare(b.name);
     return sortAsc ? comparison : -comparison;
   });
@@ -71,48 +96,56 @@ export default function NotesTable({ open, onOpenChange }: NotesTableProps) {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/20 sticky top-0">
-                  <th className="text-left px-6 py-2 text-xs font-semibold text-muted-foreground">Name</th>
-                  <th className="text-left px-6 py-2 text-xs font-semibold text-muted-foreground">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedNotes.map((note) => (
-                  <tr key={note.id} className="border-b hover:bg-muted/10 transition-colors group">
-                    <td className="px-6 py-2 text-xs">
-                      <input
-                        type="text"
-                        value={note.name}
-                        onChange={(e) => updateNote(note.id, 'name', e.target.value)}
-                        className="w-full bg-transparent border-0 focus:outline-none focus:ring-0 font-medium text-foreground placeholder-muted-foreground"
-                        placeholder="Name..."
-                      />
-                    </td>
-                    <td className="px-6 py-2 text-xs flex items-center justify-between gap-1">
-                      <input
-                        type="text"
-                        value={note.notes}
-                        onChange={(e) => updateNote(note.id, 'notes', e.target.value)}
-                        className="flex-1 bg-transparent border-0 focus:outline-none focus:ring-0 text-foreground placeholder-muted-foreground"
-                        placeholder="Notes..."
-                      />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 text-destructive opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-                        onClick={() => deleteNote(note.id)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </td>
+          {isLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b bg-muted/20 sticky top-0">
+                    <th className="text-left px-6 py-2 text-xs font-semibold text-muted-foreground">Name</th>
+                    <th className="text-left px-6 py-2 text-xs font-semibold text-muted-foreground">Notes</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {sortedNotes.map((note) => (
+                    <tr key={note.id} className="border-b hover:bg-muted/10 transition-colors group">
+                      <td className="px-6 py-2 text-xs">
+                        <input
+                          type="text"
+                          value={editValues[note.id]?.name ?? note.name}
+                          onChange={(e) => handleUpdateNote(note.id, 'name', e.target.value)}
+                          onBlur={() => handleBlur(note.id)}
+                          className="w-full bg-transparent border-0 focus:outline-none focus:ring-0 font-medium text-foreground placeholder-muted-foreground"
+                          placeholder="Name..."
+                        />
+                      </td>
+                      <td className="px-6 py-2 text-xs flex items-center justify-between gap-1">
+                        <input
+                          type="text"
+                          value={editValues[note.id]?.notes ?? note.notes}
+                          onChange={(e) => handleUpdateNote(note.id, 'notes', e.target.value)}
+                          onBlur={() => handleBlur(note.id)}
+                          className="flex-1 bg-transparent border-0 focus:outline-none focus:ring-0 text-foreground placeholder-muted-foreground"
+                          placeholder="Notes..."
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 text-destructive opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                          onClick={() => handleDelete(note.id)}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {/* Add New Note */}
@@ -122,21 +155,28 @@ export default function NotesTable({ open, onOpenChange }: NotesTableProps) {
             onChange={(e) => setNewName(e.target.value)}
             placeholder="Note name..."
             className="h-8 text-xs"
+            disabled={createNote.isPending}
           />
           <div className="flex gap-2">
             <Input
               value={newNote}
               onChange={(e) => setNewNote(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && addNote()}
+              onKeyPress={(e) => e.key === 'Enter' && !createNote.isPending && handleAddNote()}
               placeholder="Add note..."
               className="h-8 text-xs flex-1"
+              disabled={createNote.isPending}
             />
             <Button
-              onClick={addNote}
+              onClick={handleAddNote}
               className="bg-accent hover:bg-accent/90 text-white h-8 px-2"
               size="sm"
+              disabled={createNote.isPending}
             >
-              <Plus className="h-3 w-3" />
+              {createNote.isPending ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <Plus className="h-3 w-3" />
+              )}
             </Button>
           </div>
         </div>

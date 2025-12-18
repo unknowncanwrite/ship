@@ -1,19 +1,21 @@
 import { useState } from 'react';
-import { useShipmentStore } from '@/lib/store';
 import { calculateProgress } from '@/lib/shipment-utils';
+import { initialShipmentData } from '@/types/shipment';
+import { useShipments, useCreateShipment } from '@/hooks/useShipments';
 import ShipmentCard from './ShipmentCard';
 import NotesTable from './NotesTable';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Search, Filter, LayoutGrid, List, Moon, Sun, BookOpen } from 'lucide-react';
+import { Plus, Search, Filter, LayoutGrid, List, Moon, Sun, BookOpen, Loader2 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useTheme } from 'next-themes';
 
 export default function Dashboard() {
-  const { shipments, createShipment } = useShipmentStore();
+  const { data: shipments = [], isLoading } = useShipments();
+  const createShipment = useCreateShipment();
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date');
   const [_, setLocation] = useLocation();
@@ -30,23 +32,32 @@ export default function Dashboard() {
     )
     .sort((a, b) => {
       if (sortBy === 'date') return b.createdAt - a.createdAt;
-      if (sortBy === 'progress') return calculateProgress(b) - calculateProgress(a);
-      // Add more sort logic if needed
+      if (sortBy === 'progress') return calculateProgress(b as any) - calculateProgress(a as any);
       return 0;
     });
 
   const handleCreate = () => {
     if (newId) {
-      createShipment(newId);
-      setIsDialogOpen(false);
-      setLocation(`/shipment/${newId}`);
+      createShipment.mutate(
+        {
+          ...initialShipmentData,
+          id: newId,
+        },
+        {
+          onSuccess: () => {
+            setIsDialogOpen(false);
+            setNewId('');
+            setLocation(`/shipment/${newId}`);
+          },
+        }
+      );
     }
   };
 
   const stats = {
     total: shipments.length,
-    completed: shipments.filter(s => calculateProgress(s) === 100).length,
-    pending: shipments.filter(s => calculateProgress(s) < 100).length,
+    completed: shipments.filter(s => calculateProgress(s as any) === 100).length,
+    pending: shipments.filter(s => calculateProgress(s as any) < 100).length,
   };
 
   return (

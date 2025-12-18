@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { useRoute, useLocation } from 'wouter';
-import { useShipmentStore } from '@/lib/store';
+import { useShipment, useUpdateShipment, useDeleteShipment } from '@/hooks/useShipments';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, Save, Trash2, Printer, Moon, Sun, Clock, AlertCircle, Plus, X, Download } from 'lucide-react';
+import { ArrowLeft, Save, Trash2, Printer, Moon, Sun, Clock, AlertCircle, Plus, X, Download, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import PhaseSection from './PhaseSection';
 import DonutProgress from './DonutProgress';
@@ -19,6 +19,7 @@ import { format } from 'date-fns';
 import { calculateProgress, calculatePhaseProgress, getIncompleteTasks } from '@/lib/shipment-utils';
 import { PHASE_1_TASKS, PHASE_2_TASKS, PHASE_3_TASKS, PHASE_5_TASKS, getForwarderTasks, getFumigationTasks, TaskDefinition } from '@/lib/shipment-definitions';
 import { ShipmentData } from '@/types/shipment';
+import type { Shipment } from '@shared/schema';
 
 // Debounce hook for text input - fixed to prevent hook dependency issues
 const useDebouncedSave = (value: string, delay: number, onSave: (val: string) => void) => {
@@ -38,16 +39,19 @@ const useDebouncedSave = (value: string, delay: number, onSave: (val: string) =>
 };
 
 // Sub-component that safely receives non-null shipment data
-function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShipment: ShipmentData }) {
+function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShipment: Shipment }) {
   // Ensure currentShipment always has documents
   const currentShipment = { ...inputShipment, documents: inputShipment.documents || [] };
   
   const [_, setLocation] = useLocation();
-  const { updateShipment, deleteShipment, toggleChecklist, isSaving, addCustomTask, deleteCustomTask, toggleCustomTask, addDocument, deleteDocument } = useShipmentStore();
+  const updateShipment = useUpdateShipment();
+  const deleteShipmentMutation = useDeleteShipment();
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
   const [newTaskInput, setNewTaskInput] = useState('');
   const [newDocName, setNewDocName] = useState('');
+  
+  const isSaving = updateShipment.isPending;
   
   // Local states for all text input fields (prevents re-render during typing)
   const [details, setDetails] = useState(currentShipment.details);
@@ -68,11 +72,11 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
   // Debounced saves for all sections
   const saveFn = useCallback((section: string, data: any) => {
     if (section === 'details' && JSON.stringify(data) !== JSON.stringify(currentShipment.details)) {
-      updateShipment(currentShipment.id, { details: data });
+      updateShipment.mutate({ id: currentShipment.id, data: { details: data } });
     } else if (section === 'commercial' && JSON.stringify(data) !== JSON.stringify(currentShipment.commercial)) {
-      updateShipment(currentShipment.id, { commercial: data });
+      updateShipment.mutate({ id: currentShipment.id, data: { commercial: data } });
     } else if (section === 'actual' && JSON.stringify(data) !== JSON.stringify(currentShipment.actual)) {
-      updateShipment(currentShipment.id, { actual: data });
+      updateShipment.mutate({ id: currentShipment.id, data: { actual: data } });
     }
   }, [currentShipment, updateShipment]);
   
@@ -82,13 +86,13 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
   
   useDebouncedSave(manualFumigationName, 800, (val) => {
     if (val !== currentShipment.manualFumigationName) {
-      updateShipment(currentShipment.id, { manualFumigationName: val });
+      updateShipment.mutate({ id: currentShipment.id, data: { manualFumigationName: val } });
     }
   });
   
   useDebouncedSave(manualForwarderName, 800, (val) => {
     if (val !== currentShipment.manualForwarderName) {
-      updateShipment(currentShipment.id, { manualForwarderName: val });
+      updateShipment.mutate({ id: currentShipment.id, data: { manualForwarderName: val } });
     }
   });
   
@@ -106,9 +110,12 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
 
   const handleDelete = () => {
     if (confirm('Are you sure you want to delete this shipment?')) {
-      deleteShipment(currentShipment.id);
-      setLocation('/');
-      toast({ title: 'Shipment Deleted', variant: 'destructive' });
+      deleteShipmentMutation.mutate(currentShipment.id, {
+        onSuccess: () => {
+          setLocation('/');
+          toast({ title: 'Shipment Deleted', variant: 'destructive' });
+        },
+      });
     }
   };
 
@@ -127,7 +134,15 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
 
   const handleAddCustomTask = () => {
     if (newTaskInput.trim()) {
-      addCustomTask(currentShipment.id, newTaskInput.trim());
+      const newTask = {
+        id: Math.random().toString(36).substr(2, 9),
+        text: newTaskInput.trim(),
+        completed: false,
+      };
+      updateShipment.mutate({
+        id: currentShipment.id,
+        data: { customTasks: [...currentShipment.customTasks, newTask] }
+      });
       setNewTaskInput('');
     }
   };
@@ -149,7 +164,16 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
     reader.onload = (event) => {
       const fileContent = event.target?.result as string;
       const docName = newDocName.trim() || file.name.replace('.pdf', '');
-      addDocument(currentShipment.id, docName, fileContent);
+      const newDocument = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: docName,
+        file: fileContent,
+        createdAt: Date.now(),
+      };
+      updateShipment.mutate({
+        id: currentShipment.id,
+        data: { documents: [...currentShipment.documents, newDocument] }
+      });
       setNewDocName('');
       (e.target as HTMLInputElement).value = '';
       toast({
@@ -158,6 +182,29 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
       });
     };
     reader.readAsDataURL(file);
+  };
+
+  // Action helpers using mutation API
+  const toggleChecklist = (id: string, key: string) => {
+    const newChecklist = { ...currentShipment.checklist, [key]: !currentShipment.checklist[key] };
+    updateShipment.mutate({ id, data: { checklist: newChecklist } });
+  };
+
+  const toggleCustomTask = (id: string, taskId: string) => {
+    const newCustomTasks = currentShipment.customTasks.map(t => 
+      t.id === taskId ? { ...t, completed: !t.completed } : t
+    );
+    updateShipment.mutate({ id, data: { customTasks: newCustomTasks } });
+  };
+
+  const deleteCustomTask = (id: string, taskId: string) => {
+    const newCustomTasks = currentShipment.customTasks.filter(t => t.id !== taskId);
+    updateShipment.mutate({ id, data: { customTasks: newCustomTasks } });
+  };
+
+  const deleteDocument = (id: string, documentId: string) => {
+    const newDocuments = currentShipment.documents.filter(d => d.id !== documentId);
+    updateShipment.mutate({ id, data: { documents: newDocuments } });
   };
 
   // Countdown Logic
@@ -782,16 +829,14 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
 
 export default function ShipmentDetail() {
   const [match, params] = useRoute('/shipment/:id');
-  const { currentShipment, loadShipment } = useShipmentStore();
+  const { data: currentShipment, isLoading } = useShipment(params?.id || '');
 
-  useEffect(() => {
-    if (params?.id) {
-      loadShipment(params.id);
-    }
-  }, [params?.id, loadShipment]);
-
-  if (!currentShipment) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  if (isLoading || !currentShipment) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
   return <ShipmentDetailContent currentShipment={currentShipment} />;

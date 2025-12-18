@@ -64,13 +64,24 @@ export const notes = pgTable("notes", {
   createdAt: bigint("created_at", { mode: "number" }).notNull(),
 });
 
-// Insert schemas
-export const insertShipmentSchema = createInsertSchema(shipments).omit({
-  createdAt: true,
-  lastUpdated: true,
+// Insert schemas - make all fields optional except required ones
+export const insertShipmentSchema = createInsertSchema(shipments, {
+  createdAt: z.number().optional(),
+  lastUpdated: z.number().optional(),
+  details: z.any(),
+  commercial: z.any(),
+  actual: z.any(),
+  customTasks: z.any().optional().default([]),
+  documents: z.any().optional().default([]),
+  checklist: z.any().optional().default({}),
+}).partial().required({
+  id: true,
 });
 
-export const insertNoteSchema = createInsertSchema(notes).omit({
+export const insertNoteSchema = createInsertSchema(notes, {
+  id: z.string().optional(),
+  createdAt: z.number().optional(),
+}).omit({
   id: true,
   createdAt: true,
 });
