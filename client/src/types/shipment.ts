@@ -4,13 +4,13 @@ export interface ShipmentData {
   lastUpdated: number; // Timestamp
 
   // --- Logic Toggles ---
-  shipmentType: 'with-inspection' | 'no-inspection';
-  forwarder: 'xpo' | 'hmi' | 'manual';
-  manualForwarderName: string;
-  manualMethod: 'email' | 'whatsapp';
-  fumigation: 'sky-services' | 'sgs' | 'manual';
-  manualFumigationName: string;
-  manualFumigationMethod: 'email' | 'whatsapp';
+  shipmentType: 'with-inspection' | 'no-inspection' | string;
+  forwarder: 'xpo' | 'hmi' | 'manual' | string;
+  manualForwarderName: string | null;
+  manualMethod: 'email' | 'whatsapp' | string | null;
+  fumigation: 'sky-services' | 'sgs' | 'manual' | string;
+  manualFumigationName: string | null;
+  manualFumigationMethod: 'email' | 'whatsapp' | string | null;
 
   // --- Input Fields (Mapped from HTML) ---
   details: {
@@ -56,10 +56,10 @@ export const initialShipmentData: ShipmentData = {
   lastUpdated: Date.now(),
   shipmentType: 'with-inspection',
   forwarder: 'xpo',
-  manualForwarderName: '',
+  manualForwarderName: null,
   manualMethod: 'email',
   fumigation: 'sky-services',
-  manualFumigationName: '',
+  manualFumigationName: null,
   manualFumigationMethod: 'email',
   details: {
     customer: '',

@@ -198,7 +198,7 @@ export default function Dashboard() {
         {filteredShipments.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredShipments.map((shipment) => (
-              <ShipmentCard key={shipment.id} data={shipment} />
+              <ShipmentCard key={shipment.id} data={shipment as any} />
             ))}
           </div>
         ) : (

@@ -84,13 +84,13 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
   useDebouncedSave(JSON.stringify(commercial), 800, (val) => saveFn('commercial', JSON.parse(val)));
   useDebouncedSave(JSON.stringify(actual), 800, (val) => saveFn('actual', JSON.parse(val)));
   
-  useDebouncedSave(manualFumigationName, 800, (val) => {
+  useDebouncedSave(manualFumigationName || '', 800, (val) => {
     if (val !== currentShipment.manualFumigationName) {
       updateShipment.mutate({ id: currentShipment.id, data: { manualFumigationName: val } });
     }
   });
   
-  useDebouncedSave(manualForwarderName, 800, (val) => {
+  useDebouncedSave(manualForwarderName || '', 800, (val) => {
     if (val !== currentShipment.manualForwarderName) {
       updateShipment.mutate({ id: currentShipment.id, data: { manualForwarderName: val } });
     }
@@ -121,9 +121,9 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
 
   const handlePrint = (type: 'declaration' | 'undertaking' | 'shoes') => {
     let content = '';
-    if (type === 'declaration') content = printDeclaration(currentShipment);
-    else if (type === 'undertaking') content = printUndertaking(currentShipment);
-    else if (type === 'shoes') content = printShoesUndertaking(currentShipment);
+    if (type === 'declaration') content = printDeclaration(currentShipment as any);
+    else if (type === 'undertaking') content = printUndertaking(currentShipment as any);
+    else if (type === 'shoes') content = printShoesUndertaking(currentShipment as any);
 
     const win = window.open('', '_blank');
     if (win) {
@@ -442,7 +442,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                             <div className="pt-2 space-y-2 animate-in slide-in-from-top-2 fade-in">
                                 <Input 
                                     placeholder="Fumigation Provider Name" 
-                                    value={manualFumigationName} 
+                                    value={manualFumigationName || ''} 
                                     onChange={(e) => setManualFumigationName(e.target.value)}
                                     className="h-8 text-sm"
                                 />
@@ -470,7 +470,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                         <Label>Forwarder</Label>
                         <Input 
                             placeholder="Forwarder Name" 
-                            value={manualForwarderName} 
+                            value={manualForwarderName || ''} 
                             onChange={(e) => setManualForwarderName(e.target.value)}
                             className="h-8 text-sm"
                         />
