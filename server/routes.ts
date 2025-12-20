@@ -9,6 +9,18 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
   
+  // Add CORS headers middleware
+  app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    
+    if (req.method === "OPTIONS") {
+      return res.sendStatus(200);
+    }
+    next();
+  });
+
   // ============ SHIPMENT ROUTES ============
   
   // Get all shipments
