@@ -755,18 +755,32 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                     <div className="space-y-2">
                         {(currentShipment.documents || []).length > 0 ? (
                             (currentShipment.documents || []).map((doc) => (
-                                <div key={doc.id} className="flex items-center justify-between p-2 bg-muted/20 rounded-md border text-xs">
-                                    <div className="flex items-center gap-2 min-w-0">
+                                <div key={doc.id} className="flex items-center justify-between p-2 bg-muted/20 rounded-md border text-xs group hover:bg-muted/30 transition-colors">
+                                    <button
+                                      onClick={() => {
+                                        const link = document.createElement('a');
+                                        link.href = `data:application/pdf;base64,${doc.file}`;
+                                        link.download = doc.name.endsWith('.pdf') ? doc.name : `${doc.name}.pdf`;
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
+                                        toast({
+                                          title: "Download Started",
+                                          description: `${doc.name} is being downloaded.`,
+                                        });
+                                      }}
+                                      className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer hover:opacity-70"
+                                    >
                                         <Download className="h-3 w-3 text-accent flex-shrink-0" />
                                         <div className="min-w-0">
                                             <div className="font-medium truncate">{doc.name}</div>
                                             <div className="text-muted-foreground text-xs">{format(new Date(doc.createdAt), 'MMM d, yyyy')}</div>
                                         </div>
-                                    </div>
+                                    </button>
                                     <Button 
                                         variant="ghost" 
                                         size="icon" 
-                                        className="h-6 w-6 text-destructive flex-shrink-0"
+                                        className="h-6 w-6 text-destructive flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                                         onClick={() => {
                                           deleteDocument(currentShipment.id, doc.id);
                                           toast({
