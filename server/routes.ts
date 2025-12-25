@@ -66,7 +66,19 @@ export async function registerRoutes(
   // Update shipment
   app.patch("/api/shipments/:id", async (req, res) => {
     try {
-      const shipment = await storage.updateShipment(req.params.id, req.body);
+      // For updates, we don't validate the entire schema since it's partial
+      // but we ensure documents array is properly formatted if present
+      let updateData = req.body;
+      if (updateData.documents && Array.isArray(updateData.documents)) {
+        // Ensure each document has required fields
+        updateData.documents = updateData.documents.map((doc: any) => ({
+          id: doc.id || Math.random().toString(36).substr(2, 9),
+          name: doc.name || 'Untitled Document',
+          file: doc.file,
+          createdAt: doc.createdAt || Date.now(),
+        }));
+      }
+      const shipment = await storage.updateShipment(req.params.id, updateData);
       if (!shipment) {
         return res.status(404).json({ error: "Shipment not found" });
       }

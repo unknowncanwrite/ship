@@ -163,11 +163,13 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
     const reader = new FileReader();
     reader.onload = (event) => {
       const fileContent = event.target?.result as string;
+      // Remove the data URL prefix to store just the base64 content
+      const base64Content = fileContent.replace(/^data:application\/pdf;base64,/, '');
       const docName = newDocName.trim() || file.name.replace('.pdf', '');
       const newDocument = {
         id: Math.random().toString(36).substr(2, 9),
         name: docName,
-        file: fileContent,
+        file: base64Content,
         createdAt: Date.now(),
       };
       updateShipment.mutate({
