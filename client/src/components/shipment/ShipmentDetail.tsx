@@ -138,7 +138,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
   const handleAddCustomTask = () => {
     if (newTaskInput.trim()) {
       const newTask = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: `ops-${Math.random().toString(36).substr(2, 9)}`,
         text: newTaskInput.trim(),
         completed: false,
       };
@@ -264,7 +264,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
   const handleAddLogisticsTask = () => {
     if (newLogisticsTaskInput.trim()) {
       const newTask = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: `log-${Math.random().toString(36).substr(2, 9)}`,
         text: newLogisticsTaskInput.trim(),
         completed: false,
       };
@@ -431,15 +431,15 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                     <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-4">Operations Tasks</h3>
                     <div className="space-y-3">
                         {currentShipment.customTasks.map((task) => (
-                            <div key={task.id} className="flex items-center justify-between group">
+                            <div key={`ops-${task.id}`} className="flex items-center justify-between group">
                                 <div className="flex items-center gap-2">
                                     <Checkbox 
-                                        id={task.id} 
+                                        id={`ops-${task.id}`} 
                                         checked={task.completed} 
                                         onCheckedChange={() => toggleCustomTask(currentShipment.id, task.id)}
                                     />
                                     <label 
-                                        htmlFor={task.id}
+                                        htmlFor={`ops-${task.id}`}
                                         className={`text-sm cursor-pointer ${task.completed ? 'line-through text-muted-foreground' : ''}`}
                                     >
                                         {task.text}
