@@ -797,7 +797,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
             <div className="md:col-span-1 space-y-6">
                 {/* Shipment Check List */}
                 <div className="bg-card p-4 rounded-lg border shadow-sm">
-                    <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">Shipment Check List</h3>
+                    <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">Todo List</h3>
                     
                     <div className="space-y-2">
                         {(currentShipment.shipmentChecklist || []).length > 0 ? (
