@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { useRoute, useLocation } from 'wouter';
 import { useShipment, useUpdateShipment, useDeleteShipment } from '@/hooks/useShipments';
+import { useQuery } from '@tanstack/react-query';
+import { ShipmentHistory } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,7 +11,10 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, Save, Trash2, Printer, Moon, Sun, Clock, AlertCircle, Plus, X, Download, Loader2, Check } from 'lucide-react';
+import { 
+  ArrowLeft, Save, Trash2, Printer, Moon, Sun, Clock, 
+  AlertCircle, Plus, X, Download, Loader2, Check, History 
+} from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import PhaseSection from './PhaseSection';
 import DonutProgress from './DonutProgress';
@@ -20,6 +25,14 @@ import { calculateProgress, calculatePhaseProgress, getIncompleteTasks } from '@
 import { PHASE_1_TASKS, PHASE_2_TASKS, PHASE_3_TASKS, PHASE_5_TASKS, getForwarderTasks, getFumigationTasks, TaskDefinition } from '@/lib/shipment-definitions';
 import { ShipmentData } from '@/types/shipment';
 import type { Shipment } from '@shared/schema';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 // Debounce hook for text input - fixed to prevent hook dependency issues
 const useDebouncedSave = (value: string, delay: number, onSave: (val: string) => void) => {
@@ -55,7 +68,12 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
   const [uploadError, setUploadError] = useState<string | null>(null);
   
   const isSaving = updateShipment.isPending;
-  
+
+  const { data: history = [] } = useQuery<ShipmentHistory[]>({
+    queryKey: [`/api/shipments/${currentShipment.id}/history`],
+    enabled: !!currentShipment.id,
+  });
+
   // Local states for all text input fields (prevents re-render during typing)
   const [details, setDetails] = useState(currentShipment.details);
   const [commercial, setCommercial] = useState(currentShipment.commercial);
@@ -391,6 +409,48 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
           <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
+          
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <History className="h-4 w-4" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Shipment History</SheetTitle>
+                <SheetDescription>
+                  Audit log for {currentShipment.id}
+                </SheetDescription>
+              </SheetHeader>
+              <div className="mt-6 space-y-6">
+                {history.map((entry) => (
+                  <div key={entry.id} className="relative pl-6 pb-6 border-l last:pb-0">
+                    <div className="absolute left-[-5px] top-1 w-2 h-2 rounded-full bg-primary" />
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-sm">{entry.action}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {format(new Date(entry.timestamp), 'MMM d, h:mm a')}
+                        </span>
+                      </div>
+                      <div className="text-xs bg-muted/50 p-2 rounded mt-1 overflow-x-auto">
+                        <pre className="whitespace-pre-wrap font-sans">
+                          {JSON.stringify(entry.changes, null, 2)}
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {history.length === 0 && (
+                  <div className="text-center text-muted-foreground py-10">
+                    No history recorded yet
+                  </div>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
+
           <Button variant="destructive" size="icon" onClick={handleDelete}>
             <Trash2 className="h-4 w-4" />
           </Button>

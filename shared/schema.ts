@@ -66,6 +66,22 @@ export const notes = pgTable("notes", {
   createdAt: bigint("created_at", { mode: "number" }).notNull(),
 });
 
+// Shipment History table
+export const shipmentHistory = pgTable("shipment_history", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  shipmentId: varchar("shipment_id").notNull(),
+  action: text("action").notNull(), // e.g., "Created", "Updated Details", "Added Task"
+  changes: jsonb("changes").$type<Record<string, any>>(),
+  timestamp: bigint("timestamp", { mode: "number" }).notNull(),
+});
+
+// Insert schemas
+export const insertShipmentHistorySchema = createInsertSchema(shipmentHistory);
+
+// Types
+export type ShipmentHistory = typeof shipmentHistory.$inferSelect;
+export type InsertShipmentHistory = z.infer<typeof insertShipmentHistorySchema>;
+
 // Insert schemas - make all fields optional except required ones
 export const insertShipmentSchema = createInsertSchema(shipments, {
   createdAt: z.number().optional(),
