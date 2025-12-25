@@ -23,6 +23,7 @@ export const shipments = pgTable("shipments", {
     customer: string;
     consignee: string;
     location: string;
+    shippingLine: string;
     brand: string;
     inspectionDate: string;
     eta: string;

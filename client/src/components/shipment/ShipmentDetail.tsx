@@ -460,48 +460,27 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
 
                     <div className="space-y-3">
                         <Label>Fumigation Provider</Label>
+                        <Input 
+                            placeholder="Fumigation Provider Name" 
+                            value={manualFumigationName || ''} 
+                            onChange={(e) => setManualFumigationName(e.target.value)}
+                            className="h-8 text-sm"
+                            data-testid="input-fumigation-name"
+                        />
                         <RadioGroup 
-                            value={currentShipment.fumigation} 
-                            onValueChange={(val) => updateShipment.mutate({ id: currentShipment.id, data: { fumigation: val as any } })}
-                            className="flex flex-col space-y-1"
+                            value={currentShipment.manualFumigationMethod} 
+                            onValueChange={(val) => updateShipment.mutate({ id: currentShipment.id, data: { manualFumigationMethod: val as any } })}
+                            className="flex items-center gap-4"
                         >
                             <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="sky-services" id="fum1" />
-                                <Label htmlFor="fum1" className="cursor-pointer font-normal text-sm">Sky Services</Label>
+                                <RadioGroupItem value="email" id="fum_m1" />
+                                <Label htmlFor="fum_m1" className="text-xs cursor-pointer">Email</Label>
                             </div>
                             <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="sgs" id="fum2" />
-                                <Label htmlFor="fum2" className="cursor-pointer font-normal text-sm">SGS</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="manual" id="fum3" />
-                                <Label htmlFor="fum3" className="cursor-pointer font-normal text-sm">Manual / Other</Label>
+                                <RadioGroupItem value="whatsapp" id="fum_m2" />
+                                <Label htmlFor="fum_m2" className="text-xs cursor-pointer">WhatsApp</Label>
                             </div>
                         </RadioGroup>
-                        
-                        <div className="pt-2 space-y-2">
-                            <Input 
-                                placeholder="Fumigation Provider Name" 
-                                value={manualFumigationName || ''} 
-                                onChange={(e) => setManualFumigationName(e.target.value)}
-                                className="h-8 text-sm"
-                                data-testid="input-fumigation-name"
-                            />
-                            <RadioGroup 
-                                value={currentShipment.manualFumigationMethod} 
-                                onValueChange={(val) => updateShipment.mutate({ id: currentShipment.id, data: { manualFumigationMethod: val as any } })}
-                                className="flex items-center gap-4"
-                            >
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="email" id="fum_m1" />
-                                    <Label htmlFor="fum_m1" className="text-xs cursor-pointer">Email</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="whatsapp" id="fum_m2" />
-                                    <Label htmlFor="fum_m2" className="text-xs cursor-pointer">WhatsApp</Label>
-                                </div>
-                            </RadioGroup>
-                        </div>
                     </div>
 
                     <Separator />
@@ -549,6 +528,10 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                 <div className="space-y-2">
                     <Label htmlFor="location" className="text-xs text-muted-foreground uppercase font-bold">Location</Label>
                     <Input id="location" value={details.location} onChange={(e) => handleDetailChange('location', e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="shippingLine" className="text-xs text-muted-foreground uppercase font-bold">Shipping Line</Label>
+                    <Input id="shippingLine" value={details.shippingLine || ''} onChange={(e) => handleDetailChange('shippingLine', e.target.value)} />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="brand" className="text-xs text-muted-foreground uppercase font-bold">Brand</Label>
