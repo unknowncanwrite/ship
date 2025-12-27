@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { useRoute, useLocation } from 'wouter';
 import { useShipment, useUpdateShipment, useDeleteShipment } from '@/hooks/useShipments';
-import { useAuditLogs } from '@/hooks/useAuditLogs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +13,6 @@ import { ArrowLeft, Save, Trash2, Printer, Moon, Sun, Clock, AlertCircle, Plus, 
 import { useToast } from '@/hooks/use-toast';
 import PhaseSection from './PhaseSection';
 import DonutProgress from './DonutProgress';
-import ActivityTimeline from './ActivityTimeline';
 import { useTheme } from 'next-themes';
 import { printDeclaration, printUndertaking, printShoesUndertaking } from '@/lib/PrintTemplates';
 import { format } from 'date-fns';
@@ -48,7 +46,6 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
   const [_, setLocation] = useLocation();
   const updateShipment = useUpdateShipment();
   const deleteShipmentMutation = useDeleteShipment();
-  const { data: auditLogs = [] } = useAuditLogs(currentShipment.id);
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
   const [newTaskInput, setNewTaskInput] = useState('');
@@ -967,11 +964,6 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                     </Button>
                 </div>
 
-                {/* Activity Timeline */}
-                <div className="bg-card p-4 rounded-lg border shadow-sm">
-                    <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">Activity Timeline</h3>
-                    <ActivityTimeline logs={auditLogs} />
-                </div>
             </div>
         </div>
 
