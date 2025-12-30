@@ -12,30 +12,32 @@ export const printDeclaration = (data: ShipmentData) => {
     <head>
       <title>Declaration - ${data.id}</title>
       <style>
-        body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.8; max-width: 800px; margin: 0 auto; }
-        .date { text-align: right; margin-bottom: 60px; font-weight: bold; }
-        h1 { text-align: center; text-decoration: underline; margin-bottom: 60px; font-size: 20pt; letter-spacing: 2px; }
-        p { margin-bottom: 20px; text-align: justify; }
-        .declaration-body { margin: 40px 0; line-height: 1.9; }
-        .details-section { margin-top: 30px; margin-bottom: 30px; }
-        .detail-line { margin-bottom: 15px; }
-        .company-name { text-align: center; margin-top: 80px; font-weight: bold; font-size: 14pt; }
-        @media print { body { padding: 0; } }
+        body { font-family: 'Times New Roman', serif; padding: 50px 40px; line-height: 1.6; max-width: 850px; margin: 0 auto; }
+        .date { text-align: right; margin-bottom: 80px; font-size: 12pt; }
+        .spacer-before { height: 40px; }
+        h1 { text-align: center; text-decoration: underline; margin: 20px 0; font-size: 16pt; letter-spacing: 1px; }
+        .declaration-text { text-align: justify; margin: 30px 0; line-height: 1.7; font-size: 11pt; }
+        .details-section { margin-top: 40px; margin-bottom: 60px; }
+        .detail-line { margin: 8px 0; font-size: 11pt; }
+        .company-name { text-align: center; margin-top: 100px; font-size: 12pt; }
+        @media print { body { padding: 20px; } }
       </style>
     </head>
     <body>
       <div class="date">${formatDate(data.details.inspectionDate || new Date().toISOString())}</div>
+      <div class="spacer-before"></div>
       
       <h1>DECLARATION</h1>
       
-      <div class="declaration-body">
-        <p>We undertake that we import ${data.details.brand || 'used clothing'} from USA, inspected by SGS Pakistan, export to ${data.details.consignee || 'M/s Safqa Limited'}, Mombasa, Kenya vide IDF# ${data.details.idf || '_________________'}.</p>
+      <div class="declaration-text">
+        We undertake that we import ${data.details.brand || 'used clothing'} from USA, inspected by SGS Pakistan, export to ${data.details.consignee || 'M/s Safqa Limited'}, Mombasa, Kenya vide
       </div>
       
       <div class="details-section">
-        <div class="detail-line"><strong>UCR #</strong> ${data.details.ucr || '_________________'}</div>
-        <div class="detail-line"><strong>PFI#</strong> _________________</div>
-        <div class="detail-line"><strong>CNTR#</strong> ${data.details.container || '_________________'}</div>
+        <div class="detail-line">IDF# ${data.details.idf || '_________________'},</div>
+        <div class="detail-line">UCR # ${data.details.ucr || '_________________'}</div>
+        <div class="detail-line">PFI# : _________________</div>
+        <div class="detail-line">CNTR# ${data.details.container || '_________________'}</div>
       </div>
       
       <div class="company-name">
