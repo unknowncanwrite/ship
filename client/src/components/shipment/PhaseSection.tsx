@@ -46,6 +46,18 @@ export default function PhaseSection({
 }: PhaseSectionProps) {
   const { toast } = useToast();
   const [subTaskState, setSubTaskState] = useState<Record<string, boolean>>({});
+  const [localRemarks, setLocalRemarks] = useState<Record<string, string>>({});
+
+  // Initialize local remarks from checklistState
+  useEffect(() => {
+    const remarks: Record<string, string> = {};
+    Object.keys(checklistState).forEach(key => {
+      if (key.endsWith('_remarks') && typeof checklistState[key] === 'string') {
+        remarks[key] = checklistState[key] as string;
+      }
+    });
+    setLocalRemarks(remarks);
+  }, [checklistState]);
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -76,12 +88,15 @@ export default function PhaseSection({
           const isHighlighted = task.id === 'p3_prepare_docs';
           const isChecked = !!checklistState[task.id];
           const remarksKey = `${task.id}_remarks`;
-          const remarkValue = typeof checklistState[remarksKey] === 'string' ? (checklistState[remarksKey] as string) : '';
+          const remarkValue = localRemarks[remarksKey] || '';
           
           const handleRemarkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onToggle(remarksKey, e.target.value);
+            const newValue = e.target.value;
+            setLocalRemarks(prev => ({ ...prev, [remarksKey]: newValue }));
+          };
+
+          const handleRemarkBlur = () => {
+            onToggle(remarksKey, localRemarks[remarksKey] || '');
           };
           
           return (
@@ -111,7 +126,13 @@ export default function PhaseSection({
                           placeholder="Add remark..."
                           value={remarkValue}
                           onChange={handleRemarkChange}
-                          onKeyDown={(e) => e.stopPropagation()}
+                          onBlur={handleRemarkBlur}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleRemarkBlur();
+                            }
+                            e.stopPropagation();
+                          }}
                           className="h-7 text-xs bg-background/50 focus:bg-background"
                         />
                       </div>
