@@ -30,7 +30,7 @@ export const printDeclaration = (data: ShipmentData) => {
       <h1>DECLARATION</h1>
       
       <div class="declaration-text">
-        We undertake that we import ${data.details.brand || 'used clothing'} from USA, inspected by SGS Pakistan, export to ${data.details.consignee || 'M/s Safqa Limited'}, Mombasa, Kenya vide
+        We undertake that we import ${data.details.brand || 'used clothing'} from USA, inspected by SGS Pakistan, export to ${data.details.customer || '_________________'}, Mombasa, Kenya vide
       </div>
       
       <div class="details-section">
