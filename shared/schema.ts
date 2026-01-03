@@ -54,7 +54,7 @@ export const shipments = pgTable("shipments", {
   
   customTasks: jsonb("custom_tasks").notNull().$type<Array<{ id: string; text: string; completed: boolean }>>(),
   documents: jsonb("documents").notNull().$type<Array<{ id: string; name: string; file: string; createdAt: number }>>(),
-  checklist: jsonb("checklist").notNull().$type<Record<string, boolean>>(),
+  checklist: jsonb("checklist").notNull().$type<Record<string, boolean | string>>(),
   shipmentChecklist: jsonb("shipment_checklist").notNull().$type<Array<{ id: string; item: string; completed: boolean }>>(),
 });
 

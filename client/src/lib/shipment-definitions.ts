@@ -131,6 +131,7 @@ Please proceed with the finalization`
     { 
       id: 'p4_final_bl', 
       label: 'Final BL Received',
+      hasRemarks: true,
       subTasks: ['Seaway', 'Surrender', 'Telex', 'Dispatch', 'OBL']
     }
   ];

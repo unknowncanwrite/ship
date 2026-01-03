@@ -23,12 +23,39 @@ interface Task {
   hideSubject?: boolean;
 }
 
+import { useState, useEffect } from "react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Copy, Eye } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+interface Task {
+  id: string;
+  label: string;
+  hasEmail?: boolean;
+  emailSubject?: string;
+  emailBody?: string;
+  emailTo?: string;
+  emailCC?: string;
+  isWhatsApp?: boolean;
+  whatsappBody?: string;
+  needsAttachmentCheck?: boolean;
+  note?: string;
+  subTasks?: string[];
+  hideSubject?: boolean;
+  hasRemarks?: boolean;
+}
+
 interface PhaseSectionProps {
   title: string;
   phaseId: string;
   tasks: Task[];
-  checklistState: Record<string, boolean>;
-  onToggle: (key: string) => void;
+  checklistState: Record<string, boolean | string>;
+  onToggle: (key: string, value?: boolean | string) => void;
   progress: number;
   missedTaskIds?: string[];
 }
@@ -72,25 +99,43 @@ export default function PhaseSection({
         {tasks.map((task) => {
           const isMissed = missedTaskIds.includes(task.id);
           const isHighlighted = task.id === 'p3_prepare_docs';
+          const isChecked = !!checklistState[task.id];
+          const remarksKey = `${task.id}_remarks`;
+          
           return (
           <div key={task.id} className={`space-y-2 ${isMissed ? 'border-l-2 border-l-warning bg-warning/5 pl-3 py-2 rounded' : ''}`}>
             <div className={`flex items-start justify-between group p-2 rounded-md hover:bg-muted/50 transition-colors ${isMissed ? 'border-l-4 border-l-warning/50 pl-1' : ''}`}>
-              <div className="flex items-start space-x-3 pt-1">
+              <div className="flex items-start space-x-3 pt-1 w-full">
                 <Checkbox 
                   id={task.id} 
-                  checked={checklistState[task.id] || false}
-                  onCheckedChange={() => onToggle(task.id)}
+                  checked={isChecked}
+                  onCheckedChange={(checked) => onToggle(task.id, !!checked)}
                   className="mt-1"
                 />
-                <div className="space-y-1">
-                  <Label 
-                    htmlFor={task.id}
-                    className={`text-sm font-medium leading-none cursor-pointer ${
-                      checklistState[task.id] ? 'text-muted-foreground line-through decoration-muted-foreground/50' : isMissed ? 'text-warning font-semibold' : ''
-                    }`}
-                  >
-                    {task.label}
-                  </Label>
+                <div className="space-y-1 flex-1">
+                  <div className="flex items-center justify-between gap-4">
+                    <Label 
+                      htmlFor={task.id}
+                      className={`text-sm font-medium leading-none cursor-pointer ${
+                        isChecked ? 'text-muted-foreground line-through decoration-muted-foreground/50' : isMissed ? 'text-warning font-semibold' : ''
+                      }`}
+                    >
+                      {task.label}
+                    </Label>
+                    
+                    {task.hasRemarks && (
+                      <div className="flex-1 max-w-xs ml-4">
+                        <Input
+                          placeholder="Remarks..."
+                          value={typeof checklistState[remarksKey] === 'string' ? (checklistState[remarksKey] as string) : ''}
+                          onChange={(e) => onToggle(remarksKey, e.target.value)}
+                          className="h-7 text-xs"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </div>
+                    )}
+                  </div>
+
                   {isHighlighted && (
                     <div className="text-sm mt-1 bg-accent/20 text-foreground p-2 rounded border border-accent/30">
                       Health Cert, Fumigation Cert, CI, PL, Declaration of Origin, Used Clothing & Shoes Undertakings
