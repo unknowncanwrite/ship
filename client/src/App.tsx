@@ -36,7 +36,7 @@ function App() {
           <Button 
             variant="outline" 
             size="icon"
-            className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg z-50 bg-primary text-primary-foreground hover:bg-primary/90"
+            className="fixed top-20 right-6 h-12 w-12 rounded-full shadow-lg z-50 bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={() => setIsNotesOpen(true)}
             title="Open Notes"
           >
