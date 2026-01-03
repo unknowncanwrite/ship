@@ -12,10 +12,7 @@ export const printDeclaration = (data: ShipmentData) => {
     <head>
       <title>Declaration - ${data.id}</title>
       <style>
-        body { font-family: 'Times New Roman', serif; line-height: 1.6; max-width: 850px; margin: 0 auto; position: relative; padding: 0; }
-        .letterhead-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-        .letterhead-bg img { width: 100%; height: 100%; object-fit: contain; }
-        .content-wrapper { position: relative; z-index: 1; padding: 250px 60px 50px 60px; }
+        body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.6; max-width: 850px; margin: 0 auto; position: relative; }
         .date { text-align: right; margin-bottom: 40px; font-size: 12pt; }
         .spacer-before { height: 20px; }
         h1 { text-align: center; text-decoration: underline; margin: 20px 0; font-size: 16pt; letter-spacing: 1px; }
@@ -23,37 +20,28 @@ export const printDeclaration = (data: ShipmentData) => {
         .details-section { margin-top: 40px; margin-bottom: 40px; }
         .detail-line { margin: 8px 0; font-size: 11pt; }
         .company-name { text-align: left; margin-top: 60px; font-size: 12pt; }
-        @media print { 
-          body { padding: 0; margin: 0; }
-          .letterhead-bg { display: block; width: 100%; height: 100%; }
-          .content-wrapper { padding-top: 250px; }
-        }
+        @media print { body { padding: 40px; } }
       </style>
     </head>
     <body>
-      <div class="letterhead-bg">
-        <img src="/attached_assets/IDEAS_LETTER_HEAD_1767448159894.pdf" alt="Letterhead" />
+      <div class="date">${formatDate(data.details.inspectionDate || new Date().toISOString())}</div>
+      <div class="spacer-before"></div>
+      
+      <h1>DECLARATION</h1>
+      
+      <div class="declaration-text">
+        We undertake that we import ${data.details.brand || 'used clothing'} from USA, inspected by SGS Pakistan, export to ${data.details.customer || '_________________'}, Mombasa, Kenya vide
       </div>
-      <div class="content-wrapper">
-        <div class="date">${formatDate(data.details.inspectionDate || new Date().toISOString())}</div>
-        <div class="spacer-before"></div>
-        
-        <h1>DECLARATION</h1>
-        
-        <div class="declaration-text">
-          We undertake that we import ${data.details.brand || 'used clothing'} from USA, inspected by SGS Pakistan, export to ${data.details.customer || '_________________'}, Mombasa, Kenya vide
-        </div>
-        
-        <div class="details-section">
-          <div class="detail-line">IDF# ${data.details.idf || '_________________'},</div>
-          <div class="detail-line">UCR # ${data.details.ucr || '_________________'}</div>
-          <div class="detail-line">PFI# : ${data.details.proforma || '_________________'}</div>
-          <div class="detail-line">CNTR# ${data.details.container || '_________________'}</div>
-        </div>
-        
-        <div class="company-name">
-          IDEAS RECYCLING PVT LTD
-        </div>
+      
+      <div class="details-section">
+        <div class="detail-line">IDF# ${data.details.idf || '_________________'},</div>
+        <div class="detail-line">UCR # ${data.details.ucr || '_________________'}</div>
+        <div class="detail-line">PFI# : ${data.details.proforma || '_________________'}</div>
+        <div class="detail-line">CNTR# ${data.details.container || '_________________'}</div>
+      </div>
+      
+      <div class="company-name">
+        IDEAS RECYCLING PVT LTD
       </div>
       
       <script>window.print();</script>
@@ -68,7 +56,7 @@ export const printUndertaking = (data: ShipmentData) => {
     <head>
       <title>Undertaking - ${data.id}</title>
       <style>
-        body { font-family: 'Times New Roman', serif; padding: 250px 40px 50px 40px; line-height: 1.6; max-width: 800px; margin: 0 auto; margin-top: 100px; }
+        body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.6; max-width: 800px; margin: 0 auto; }
         .date { text-align: left; margin-bottom: 30px; font-size: 11pt; }
         .recipient { margin-bottom: 30px; font-size: 11pt; }
         .subject { text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 30px; font-size: 12pt; }
@@ -80,7 +68,7 @@ export const printUndertaking = (data: ShipmentData) => {
         .detail-line { margin-bottom: 5px; }
         .footer { margin-top: 60px; font-size: 11pt; }
         .regards { margin-bottom: 40px; }
-        @media print { body { padding: 20px; } }
+        @media print { body { padding: 40px; } }
       </style>
     </head>
     <body>
@@ -131,7 +119,7 @@ export const printShoesUndertaking = (data: ShipmentData) => {
     <head>
       <title>Shoes Undertaking - ${data.id}</title>
       <style>
-        body { font-family: 'Times New Roman', serif; padding: 250px 40px 50px 40px; line-height: 1.6; max-width: 800px; margin: 0 auto; margin-top: 100px; }
+        body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.6; max-width: 800px; margin: 0 auto; }
         .date { text-align: left; margin-bottom: 30px; font-size: 11pt; }
         .recipient { margin-bottom: 30px; font-size: 11pt; }
         .subject { text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 30px; font-size: 12pt; }
@@ -140,7 +128,7 @@ export const printShoesUndertaking = (data: ShipmentData) => {
         .detail-line { margin-bottom: 5px; }
         .footer { margin-top: 60px; font-size: 11pt; }
         .regards { margin-bottom: 40px; }
-        @media print { body { padding: 20px; } }
+        @media print { body { padding: 40px; } }
       </style>
     </head>
     <body>
