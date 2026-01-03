@@ -42,6 +42,7 @@ function App() {
               className="h-12 w-12 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90"
               onClick={() => setIsNotesOpen(true)}
               title="Open Notes"
+              data-testid="button-toggle-notes"
             >
               <BookOpen className="h-6 w-6" />
             </Button>
@@ -53,6 +54,7 @@ function App() {
               className="h-12 w-12 rounded-full shadow-lg bg-accent text-white hover:bg-accent/90"
               onClick={() => setIsContactsOpen(true)}
               title="Open Contacts"
+              data-testid="button-toggle-contacts"
             >
               <Users className="h-6 w-6" />
             </Button>

@@ -118,6 +118,7 @@ export default function ContactsTable({ open, onOpenChange }: ContactsTableProps
                           onBlur={() => handleBlur(contact.id)}
                           className="w-full bg-transparent border-0 focus:outline-none focus:ring-0 font-medium text-foreground placeholder-muted-foreground"
                           placeholder="Name..."
+                          data-testid={`input-contact-name-${contact.id}`}
                         />
                       </td>
                       <td className="px-6 py-2 text-xs flex items-center justify-between gap-1">
@@ -128,12 +129,14 @@ export default function ContactsTable({ open, onOpenChange }: ContactsTableProps
                           onBlur={() => handleBlur(contact.id)}
                           className="flex-1 bg-transparent border-0 focus:outline-none focus:ring-0 text-foreground placeholder-muted-foreground"
                           placeholder="Details..."
+                          data-testid={`input-contact-details-${contact.id}`}
                         />
                         <Button
                           variant="ghost"
                           size="sm"
                           className="h-6 w-6 p-0 text-destructive opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                           onClick={() => handleDelete(contact.id)}
+                          data-testid={`button-delete-contact-${contact.id}`}
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
@@ -153,6 +156,7 @@ export default function ContactsTable({ open, onOpenChange }: ContactsTableProps
             placeholder="Contact name..."
             className="h-8 text-xs"
             disabled={createContact.isPending}
+            data-testid="input-new-contact-name"
           />
           <div className="flex gap-2">
             <Input
@@ -162,12 +166,14 @@ export default function ContactsTable({ open, onOpenChange }: ContactsTableProps
               placeholder="Add details (email/phone)..."
               className="h-8 text-xs flex-1"
               disabled={createContact.isPending}
+              data-testid="input-new-contact-details"
             />
             <Button
               onClick={handleAddContact}
               className="bg-accent hover:bg-accent/90 text-white h-8 px-2"
               size="sm"
               disabled={createContact.isPending}
+              data-testid="button-add-contact"
             >
               {createContact.isPending ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
