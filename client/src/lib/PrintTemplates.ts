@@ -56,53 +56,55 @@ export const printUndertaking = (data: ShipmentData) => {
     <head>
       <title>Undertaking - ${data.id}</title>
       <style>
-        body { font-family: Arial, sans-serif; padding: 250px 40px 50px 40px; line-height: 1.5; max-width: 800px; margin: 0 auto; margin-top: 100px; }
-        .header { text-align: center; margin-bottom: 30px; }
-        h2 { text-decoration: underline; margin-bottom: 20px; }
-        .content { text-align: justify; }
-        .footer { margin-top: 50px; }
-        @media print { body { padding: 0; } }
+        body { font-family: 'Times New Roman', serif; padding: 250px 40px 50px 40px; line-height: 1.6; max-width: 800px; margin: 0 auto; margin-top: 100px; }
+        .date { text-align: left; margin-bottom: 30px; font-size: 11pt; }
+        .recipient { margin-bottom: 30px; font-size: 11pt; }
+        .subject { text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 30px; font-size: 12pt; }
+        .content { text-align: justify; margin-bottom: 30px; font-size: 11pt; }
+        .points { margin-bottom: 30px; font-size: 11pt; }
+        .point-item { margin-bottom: 10px; padding-left: 20px; position: relative; }
+        .point-item:before { content: "•"; position: absolute; left: 0; }
+        .details-section { margin-bottom: 40px; font-size: 11pt; }
+        .detail-line { margin-bottom: 5px; }
+        .footer { margin-top: 60px; font-size: 11pt; }
+        .regards { margin-bottom: 40px; }
+        @media print { body { padding: 250px 40px 50px 40px; } }
       </style>
     </head>
     <body>
-      <div class="header">
-        <h2>LETTER OF UNDERTAKING</h2>
+      <div class="date">${formatDate(data.details.inspectionDate || new Date().toISOString())}</div>
+      
+      <div class="recipient">
+        TO,<br/>
+        SGS PAKISTAN (PRIVATE) LIMITED<br/>
+        H-3/3, SECTOR 5, KORANGI INDUSTRIAL AREA,<br/>
+        KARACHI-74900, PAKISTAN
       </div>
       
+      <div class="subject">SUBJECT: UNDERTAKING LETTER</div>
+      
       <div class="content">
-        <p>Date: ${formatDate(new Date().toISOString())}</p>
-        <br/>
-        <p>To: The Manager,</p>
-        <p>Shipping Line / Agent,</p>
-        <p>Mombasa.</p>
-        <br/>
-        
-        <p>Dear Sir,</p>
-        
-        <p><strong>RE: CONTAINER GUARANTEE FOR ${data.details.container || '_________________'}</strong></p>
-        
-        <p>
-          In consideration of your releasing the above container(s) to us for clearance and delivery to our premises, 
-          we hereby undertake to return the said container(s) to your nominated empty depot in good condition and clean state.
-        </p>
-        
-        <p>
-          We further undertake to pay for any detention/demurrage charges that may accrue and repair costs for any 
-          damages that may occur while the container is in our custody.
-        </p>
-        
-        <p>
-          <strong>Consignee:</strong> ${data.details.consignee || '_________________'}<br/>
-          <strong>BL Number:</strong> ${data.details.booking || '_________________'}<br/>
-          <strong>IDF Number:</strong> ${data.details.idf || '_________________'}
-        </p>
+        We declares that this shipment of Mombasa, 
+      </div>
+      
+      <div class="points">
+        <div class="point-item">No package shall contain used undergarments, sleepwear, bath towels, hospital textiles, high visibility garments, handkerchiefs and facemasks.</div>
+        <div class="point-item">Used textile products in the consignment shall be free from prohibited materials such as asbestos mineral wool and erionite</div>
+        <div class="point-item">For used footwear, no prohibited goods included in the consignment such as Used slippers and ORTHOPEDIC footwear</div>
+      </div>
+      
+      <div class="details-section">
+        <div class="detail-line">IDF# ${data.details.idf || '_________________'},</div>
+        <div class="detail-line">UCR# : ${data.details.ucr || '_________________'}</div>
+        <div class="detail-line">PFI# : ${data.details.proforma || '_________________'}</div>
+        <div class="detail-line">CNTR# : ${data.details.container || '_________________'}</div>
+        <div class="detail-line">IMPORTER: ${data.details.consignee || '_________________'}</div>
+        <div class="detail-line">NO. OF PACKAGES: ${data.actual?.qty || '_________________'}</div>
       </div>
       
       <div class="footer">
-        <p>For and on behalf of:</p>
-        <br/><br/>
-        <p>__________________________</p>
-        <p>Authorised Signatory & Stamp</p>
+        <div class="regards">THANKS & REGRADS</div>
+        <div class="company">IDEAS RECYCLING PVT LTD</div>
       </div>
       
       <script>window.print();</script>
