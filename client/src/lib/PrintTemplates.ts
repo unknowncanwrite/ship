@@ -56,53 +56,33 @@ export const printUndertaking = (data: ShipmentData) => {
     <head>
       <title>Undertaking - ${data.id}</title>
       <style>
-        body { font-family: Arial, sans-serif; padding: 250px 40px 50px 40px; line-height: 1.5; max-width: 800px; margin: 0 auto; margin-top: 100px; }
-        .header { text-align: center; margin-bottom: 30px; }
-        h2 { text-decoration: underline; margin-bottom: 20px; }
-        .content { text-align: justify; }
-        .footer { margin-top: 50px; }
-        @media print { body { padding: 0; } }
+        body { font-family: 'Times New Roman', serif; padding: 250px 40px 50px 40px; line-height: 1.6; max-width: 850px; margin: 0 auto; margin-top: 100px; }
+        .date { text-align: right; margin-bottom: 80px; font-size: 12pt; }
+        h1 { text-align: center; text-decoration: underline; margin: 40px 0; font-size: 16pt; letter-spacing: 1px; }
+        .content { text-align: justify; margin: 30px 0; line-height: 1.7; font-size: 11pt; }
+        .details { margin: 30px 0; line-height: 1.8; }
+        .footer { margin-top: 80px; text-align: left; }
+        @media print { body { padding: 20px; } }
       </style>
     </head>
     <body>
-      <div class="header">
-        <h2>LETTER OF UNDERTAKING</h2>
-      </div>
+      <div class="date">${formatDate(data.details.inspectionDate || new Date().toISOString())}</div>
+      
+      <h1>UNDERTAKING OF USED CLOTHING</h1>
       
       <div class="content">
-        <p>Date: ${formatDate(new Date().toISOString())}</p>
-        <br/>
-        <p>To: The Manager,</p>
-        <p>Shipping Line / Agent,</p>
-        <p>Mombasa.</p>
-        <br/>
-        
-        <p>Dear Sir,</p>
-        
-        <p><strong>RE: CONTAINER GUARANTEE FOR ${data.details.container || '_________________'}</strong></p>
-        
-        <p>
-          In consideration of your releasing the above container(s) to us for clearance and delivery to our premises, 
-          we hereby undertake to return the said container(s) to your nominated empty depot in good condition and clean state.
-        </p>
-        
-        <p>
-          We further undertake to pay for any detention/demurrage charges that may accrue and repair costs for any 
-          damages that may occur while the container is in our custody.
-        </p>
-        
-        <p>
-          <strong>Consignee:</strong> ${data.details.consignee || '_________________'}<br/>
-          <strong>BL Number:</strong> ${data.details.booking || '_________________'}<br/>
-          <strong>IDF Number:</strong> ${data.details.idf || '_________________'}
-        </p>
+        We hereby undertake that the used clothing imported from USA, inspected by SGS Pakistan, export to ${data.details.consignee || 'M/s Safqa Limited'}, Mombasa, Kenya vide
       </div>
-      
+
+      <div class="details">
+        IDF# ${data.details.idf || '_________________'},<br/>
+        UCR # ${data.details.ucr || '_________________'}<br/>
+        PFI# : ${data.details.proforma || '_________________'}<br/>
+        CNTR# ${data.details.container || '_________________'}
+      </div>
+
       <div class="footer">
-        <p>For and on behalf of:</p>
-        <br/><br/>
-        <p>__________________________</p>
-        <p>Authorised Signatory & Stamp</p>
+        IDEAS RECYCLING PVT LTD
       </div>
       
       <script>window.print();</script>
@@ -117,35 +97,34 @@ export const printShoesUndertaking = (data: ShipmentData) => {
     <head>
       <title>Shoes Undertaking - ${data.id}</title>
       <style>
-        body { font-family: 'Courier New', monospace; padding: 250px 40px 50px 40px; font-size: 14px; max-width: 800px; margin: 0 auto; margin-top: 100px; }
-        h1 { text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 30px; }
-        p { margin-bottom: 12px; }
-        @media print { body { padding: 0; } }
+        body { font-family: 'Times New Roman', serif; padding: 250px 40px 50px 40px; line-height: 1.6; max-width: 850px; margin: 0 auto; margin-top: 100px; }
+        .date { text-align: right; margin-bottom: 80px; font-size: 12pt; }
+        h1 { text-align: center; text-decoration: underline; margin: 40px 0; font-size: 16pt; letter-spacing: 1px; }
+        .content { text-align: justify; margin: 30px 0; line-height: 1.7; font-size: 11pt; }
+        .details { margin: 30px 0; line-height: 1.8; }
+        .footer { margin-top: 80px; text-align: left; }
+        @media print { body { padding: 20px; } }
       </style>
     </head>
     <body>
-      <h1>UNDERTAKING FOR USED SHOES</h1>
+      <div class="date">${formatDate(data.details.inspectionDate || new Date().toISOString())}</div>
       
-      <p><strong>IDF NO:</strong> ${data.details.idf}</p>
-      <p><strong>IMPORTER:</strong> ${data.details.consignee}</p>
-      <p><strong>CONTAINER:</strong> ${data.details.container}</p>
+      <h1>UNDERTAKING OF SHOES</h1>
       
-      <br/>
-      
-      <p>I/We hereby undertake that the used shoes imported in the above mentioned container(s) have been fumigated as per KEBS requirements.</p>
-      
-      <p>We declare that the shoes are:</p>
-      <ul>
-        <li>Clean and free from pests/diseases</li>
-        <li>Fit for human use</li>
-        <li>Not collected from hospital waste</li>
-      </ul>
-      
-      <p>We accept full responsibility for any consequences arising from false declaration.</p>
-      
-      <br/><br/>
-      <p>Signed: ____________________</p>
-      <p>Date: ${formatDate(new Date().toISOString())}</p>
+      <div class="content">
+        We hereby undertake that the used shoes imported from USA, inspected by SGS Pakistan, export to ${data.details.consignee || 'M/s Safqa Limited'}, Mombasa, Kenya vide
+      </div>
+
+      <div class="details">
+        IDF# ${data.details.idf || '_________________'},<br/>
+        UCR # ${data.details.ucr || '_________________'}<br/>
+        PFI# : ${data.details.proforma || '_________________'}<br/>
+        CNTR# ${data.details.container || '_________________'}
+      </div>
+
+      <div class="footer">
+        IDEAS RECYCLING PVT LTD
+      </div>
       
       <script>window.print();</script>
     </body>
