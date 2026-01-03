@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Contact, InsertContact } from "@shared/schema";
-import { apiRequest, queryClient } from "../lib/api";
+import { apiRequest, queryClient } from "../lib/queryClient";
 
 export function useContacts() {
   return useQuery<Contact[]>({
