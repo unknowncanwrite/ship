@@ -227,9 +227,14 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
 
   // Action helpers using mutation API
   const toggleChecklist = useCallback((key: string, value?: boolean | string) => {
-    // For remarks, we need the latest checklist state to avoid overwriting other remarks
+    // We must use a function update or read the latest state carefully
+    // Since we're using React Query, we should use the data from the currentShipment prop
     const currentChecklist = currentShipment.checklist || {};
     const newValue = value !== undefined ? value : !currentChecklist[key];
+    
+    // Optimization: Don't mutate if value is same
+    if (currentChecklist[key] === newValue) return;
+
     const newChecklist = { ...currentChecklist, [key]: newValue };
     
     updateShipment.mutate({ 

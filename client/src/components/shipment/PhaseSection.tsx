@@ -24,6 +24,7 @@ interface Task {
   subTasks?: string[];
   hideSubject?: boolean;
   hasRemarks?: boolean;
+  onSubTaskToggle?: (taskId: string, subTaskIdx: number, checked: boolean) => void;
 }
 
 interface PhaseSectionProps {
