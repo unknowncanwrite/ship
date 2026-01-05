@@ -129,6 +129,10 @@ BOOKING NUMBER: ${d.details.booking}`,
       emailBody: (d) => `Draft BL Approved for Container: ${d.details.container}, Booking: ${d.details.booking}
 Please proceed with the finalization`
     },
+    {
+      id: 'p4_prep_docs',
+      label: 'Prepare documents as per BL and send to forwarder'
+    },
     { 
       id: 'p4_final_bl', 
       label: 'Final BL Received',
