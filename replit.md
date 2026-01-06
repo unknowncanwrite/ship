@@ -5,7 +5,7 @@ A shipment management application that tracks shipments, notes, and contacts wit
 
 ## Tech Stack
 - **Frontend**: React + Vite + TailwindCSS
-- **Backend**: MongoDB Atlas (via Mongoose)
+- **Backend**: Supabase PostgreSQL (via Drizzle ORM)
 - **File Storage**: Google Drive (via Replit integration)
 - **Deployment**: Vercel (serverless functions)
 
@@ -13,7 +13,7 @@ A shipment management application that tracks shipments, notes, and contacts wit
 
 ### Required Environment Variables
 Set these in Vercel project settings:
-- `MONGODB_URI` - MongoDB Atlas connection string
+- `SUPABASE_DATABASE_URL` - Supabase PostgreSQL connection string
 
 ### Deployment Steps
 1. Push code to GitHub repository
@@ -30,7 +30,7 @@ Set these in Vercel project settings:
 Documents uploaded to shipments are stored in Google Drive:
 - Uses Replit's Google Drive connector for authentication
 - Files are uploaded with public read access for easy sharing
-- Document links are stored in MongoDB, not the file content
+- Document links are stored in PostgreSQL, not the file content
 
 ## GitHub Sync
 - Repository: https://github.com/unknowncanwrite/ship
@@ -46,3 +46,10 @@ Documents uploaded to shipments are stored in Google Drive:
 - `PATCH/DELETE /api/contacts/[id]` - Contact operations
 - `POST /api/files/upload` - Upload file to Google Drive
 - `GET/DELETE /api/files/[id]` - Get/delete file from Google Drive
+
+## Database Schema
+Tables managed via Drizzle ORM:
+- `shipments` - Main shipment records with JSON fields for complex data
+- `notes` - Quick notes
+- `contacts` - Contact information
+- `audit_logs` - Change history for shipments
