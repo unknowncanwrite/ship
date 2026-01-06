@@ -149,7 +149,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
@@ -166,63 +166,77 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
     setUploadProgress(0);
     setUploadError(null);
 
-    const reader = new FileReader();
-    
-    reader.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentComplete = Math.round((event.loaded / event.total) * 100);
-        setUploadProgress(percentComplete);
-      }
-    };
+    try {
+      const reader = new FileReader();
+      
+      reader.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 50);
+          setUploadProgress(percentComplete);
+        }
+      };
 
-    reader.onload = (event) => {
-      try {
-        const fileContent = event.target?.result as string;
-        // Remove the data URL prefix to store just the base64 content
-        const base64Content = fileContent.replace(/^data:application\/pdf;base64,/, '');
-        const docName = newDocName.trim() || file.name.replace('.pdf', '');
-        const newDocument = {
-          id: Math.random().toString(36).substr(2, 9),
-          name: docName,
-          file: base64Content,
-          createdAt: Date.now(),
+      const base64Content = await new Promise<string>((resolve, reject) => {
+        reader.onload = (event) => {
+          const result = event.target?.result as string;
+          const base64 = result.replace(/^data:application\/pdf;base64,/, '');
+          resolve(base64);
         };
-        updateShipment.mutate({
-          id: currentShipment.id,
-          data: { documents: [...currentShipment.documents, newDocument] }
-        });
-        setNewDocName('');
-        (e.target as HTMLInputElement).value = '';
-        setUploadProgress(100);
-        setTimeout(() => {
-          setUploadProgress(null);
-          toast({
-            title: "Document Uploaded",
-            description: `${docName} has been added to this shipment.`,
-          });
-        }, 300);
-      } catch (error) {
-        setUploadError('Error uploading file');
+        reader.onerror = () => reject(new Error('Error reading file'));
+        reader.readAsDataURL(file);
+      });
+
+      setUploadProgress(50);
+
+      const docName = newDocName.trim() || file.name.replace('.pdf', '');
+      
+      const response = await fetch('/api/files/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: `${docName}.pdf`,
+          mimeType: 'application/pdf',
+          fileContent: base64Content,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload to Google Drive');
+      }
+
+      const driveFile = await response.json();
+      
+      const newDocument = {
+        id: driveFile.id,
+        name: docName,
+        file: driveFile.webViewLink,
+        createdAt: Date.now(),
+      };
+      
+      updateShipment.mutate({
+        id: currentShipment.id,
+        data: { documents: [...currentShipment.documents, newDocument] }
+      });
+      
+      setNewDocName('');
+      (e.target as HTMLInputElement).value = '';
+      setUploadProgress(100);
+      setTimeout(() => {
         setUploadProgress(null);
         toast({
-          title: "Upload Failed",
-          description: "An error occurred while uploading the file.",
-          variant: "destructive"
+          title: "Document Uploaded",
+          description: `${docName} has been uploaded to Google Drive.`,
         });
-      }
-    };
-
-    reader.onerror = () => {
-      setUploadError('Error reading file');
+      }, 300);
+    } catch (error) {
+      setUploadError('Error uploading file');
       setUploadProgress(null);
       toast({
         title: "Upload Failed",
-        description: "An error occurred while reading the file.",
+        description: "An error occurred while uploading the file.",
         variant: "destructive"
       });
-    };
-
-    reader.readAsDataURL(file);
+    }
   };
 
   // Action helpers using mutation API
@@ -907,16 +921,24 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                                 <div key={doc.id} className="flex items-center justify-between p-2 bg-muted/20 rounded-md border text-xs group hover:bg-muted/30 transition-colors">
                                     <button
                                       onClick={() => {
-                                        const link = document.createElement('a');
-                                        link.href = `data:application/pdf;base64,${doc.file}`;
-                                        link.download = doc.name.endsWith('.pdf') ? doc.name : `${doc.name}.pdf`;
-                                        document.body.appendChild(link);
-                                        link.click();
-                                        document.body.removeChild(link);
-                                        toast({
-                                          title: "Download Started",
-                                          description: `${doc.name} is being downloaded.`,
-                                        });
+                                        if (doc.file.startsWith('http')) {
+                                          window.open(doc.file, '_blank');
+                                          toast({
+                                            title: "Opening Document",
+                                            description: `${doc.name} is opening in Google Drive.`,
+                                          });
+                                        } else {
+                                          const link = document.createElement('a');
+                                          link.href = `data:application/pdf;base64,${doc.file}`;
+                                          link.download = doc.name.endsWith('.pdf') ? doc.name : `${doc.name}.pdf`;
+                                          document.body.appendChild(link);
+                                          link.click();
+                                          document.body.removeChild(link);
+                                          toast({
+                                            title: "Download Started",
+                                            description: `${doc.name} is being downloaded.`,
+                                          });
+                                        }
                                       }}
                                       className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer hover:opacity-70"
                                     >
