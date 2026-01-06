@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage-mongo";
 import { insertShipmentSchema, insertNoteSchema, insertContactSchema, type Shipment } from "@shared/schema";
 import { z } from "zod";
+import { uploadFileToDrive, deleteFileFromDrive } from "./google-drive";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -257,13 +258,32 @@ export async function registerRoutes(
     }
   });
 
-  // ============ SUPABASE CONFIG ROUTE ============
+  // ============ FILE UPLOAD ROUTES (Google Drive) ============
   
-  app.get("/api/supabase-config", (req, res) => {
-    res.json({
-      url: process.env.SUPABASE_URL || '',
-      anonKey: process.env.SUPABASE_ANON_KEY || '',
-    });
+  app.post("/api/files/upload", async (req, res) => {
+    try {
+      const { fileName, mimeType, fileContent } = req.body;
+
+      if (!fileName || !mimeType || !fileContent) {
+        return res.status(400).json({ error: 'Missing required fields: fileName, mimeType, fileContent' });
+      }
+
+      const result = await uploadFileToDrive(fileName, mimeType, fileContent);
+      res.status(201).json(result);
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      res.status(500).json({ error: error.message || 'Failed to upload file' });
+    }
+  });
+
+  app.delete("/api/files/:id", async (req, res) => {
+    try {
+      await deleteFileFromDrive(req.params.id);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error('Delete file error:', error);
+      res.status(500).json({ error: error.message || 'Failed to delete file' });
+    }
   });
 
   return httpServer;
