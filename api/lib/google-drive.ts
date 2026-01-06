@@ -37,8 +37,19 @@ async function getAccessToken() {
 }
 
 export async function getGoogleDriveClient() {
-  const accessToken = await getAccessToken();
+  // Check for Service Account credentials (Vercel)
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+    const auth = new google.auth.JWT(
+      process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      null as any,
+      process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      ['https://www.googleapis.com/auth/drive']
+    );
+    return google.drive({ version: 'v3', auth });
+  }
 
+  // Fallback to Replit Connector (Local/Replit)
+  const accessToken = await getAccessToken();
   const oauth2Client = new google.auth.OAuth2();
   oauth2Client.setCredentials({
     access_token: accessToken
