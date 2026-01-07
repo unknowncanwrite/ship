@@ -40,13 +40,30 @@ export class DatabaseStorage implements IStorage {
 
   async createShipment(shipment: InsertShipment): Promise<Shipment> {
     const now = Date.now();
+    const newShipment = {
+      ...shipment,
+      id: shipment.id,
+      createdAt: shipment.createdAt ?? now,
+      lastUpdated: shipment.lastUpdated ?? now,
+      shipmentType: shipment.shipmentType || 'with-inspection',
+      forwarder: shipment.forwarder || '',
+      manualForwarderName: shipment.manualForwarderName || '',
+      manualMethod: shipment.manualMethod || 'email',
+      fumigation: shipment.fumigation || 'sky-services',
+      manualFumigationName: shipment.manualFumigationName || '',
+      manualFumigationMethod: shipment.manualFumigationMethod || 'email',
+      details: shipment.details || {},
+      commercial: shipment.commercial || {},
+      actual: shipment.actual || {},
+      customTasks: shipment.customTasks || [],
+      documents: shipment.documents || [],
+      checklist: shipment.checklist || {},
+      shipmentChecklist: shipment.shipmentChecklist || [],
+    };
+    
     const [created] = await db
       .insert(shipments)
-      .values({
-        ...shipment,
-        createdAt: now,
-        lastUpdated: now,
-      } as any)
+      .values(newShipment as any)
       .returning();
     return created;
   }
@@ -74,11 +91,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createAuditLog(log: InsertAuditLog): Promise<AuditLog> {
+    const now = Date.now();
     const [created] = await db
       .insert(auditLogs)
       .values({
         ...log,
-        timestamp: Date.now(),
+        id: crypto.randomUUID(),
+        timestamp: now,
       })
       .returning();
     return created;
@@ -90,11 +109,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createNote(note: InsertNote): Promise<Note> {
+    const now = Date.now();
     const [created] = await db
       .insert(notes)
       .values({
         ...note,
-        createdAt: Date.now(),
+        id: crypto.randomUUID(),
+        createdAt: now,
       })
       .returning();
     return created;
@@ -120,11 +141,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createContact(contact: InsertContact): Promise<Contact> {
+    const now = Date.now();
     const [created] = await db
       .insert(contacts)
       .values({
         ...contact,
-        createdAt: Date.now(),
+        id: crypto.randomUUID(),
+        createdAt: now,
       })
       .returning();
     return created;

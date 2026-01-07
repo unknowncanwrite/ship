@@ -1,0 +1,132 @@
+l logs
+Search
+Search
+
+Live tail
+GMT+5
+
+
+
+==> Downloading cache...
+==> Cloning from https://github.com/unknowncanwrite/SHIP1
+==> Checking out commit cec1a59d437d97928bf0ebc877132f1934fce5f4 in branch main
+==> Downloaded 211MB in 3s. Extraction took 4s.
+==> Using Node.js version 22.16.0 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Running build command 'npm install; npm run build'...
+up to date, audited 565 packages in 1s
+53 packages are looking for funding
+  run `npm fund` for details
+10 vulnerabilities (5 moderate, 5 high)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+> rest-express@1.0.0 build
+> tsx script/build.ts
+building client...
+vite v7.1.12 building for production...
+transforming...
+✓ 2784 modules transformed.
+rendering chunks...
+[meta-images] no Replit deployment domain found, skipping meta tag updates
+computing gzip size...
+../dist/public/index.html                   1.39 kB │ gzip:   0.56 kB
+../dist/public/assets/index--LpjaBAy.css  109.98 kB │ gzip:  17.57 kB
+../dist/public/assets/index-AWK0EVVB.js   878.57 kB │ gzip: 255.12 kB
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.78s
+building server...
+  dist/index.cjs  2.2mb ⚠️
+⚡ Done in 354ms
+==> Uploading build...
+==> Uploaded in 5.6s. Compression took 3.7s
+==> Build successful 🎉
+==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+==> Deploying...
+==> Running 'npm run start'
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.cjs
+MONGODB_URI not set. MongoDB features will not work.
+7:48:00 AM [express] serving on port 10000
+==> Your service is live 🎉
+==> 
+==> ///////////////////////////////////////////////////////////
+==> 
+==> Available at your primary URL https://ship1.onrender.com
+==> 
+==> ///////////////////////////////////////////////////////////
+Error fetching contacts: ry [MongooseError]: Operation `contacts.find()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:36 AM [express] GET /api/contacts 500 in 10008ms :: {"error":"Failed to fetch contacts"}
+Error fetching shipments: ry [MongooseError]: Operation `shipments.find()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:36 AM [express] GET /api/shipments 500 in 10003ms :: {"error":"Failed to fetch shipments"}
+Error fetching notes: ry [MongooseError]: Operation `notes.find()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:36 AM [express] GET /api/notes 500 in 10003ms :: {"error":"Failed to fetch notes"}
+Error creating shipment: ry [MongooseError]: Operation `shipments.insertOne()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:38 AM [express] POST /api/shipments 500 in 10052ms :: {"error":"Failed to create shipment"}
+7:48:38 AM [express] POST /api/shipments 500 in 10005ms :: {"error":"Failed to create shipment"}
+Error creating shipment: ry [MongooseError]: Operation `shipments.insertOne()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+Error creating shipment: ry [MongooseError]: Operation `shipments.insertOne()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:39 AM [express] POST /api/shipments 500 in 10005ms :: {"error":"Failed to create shipment"}
+Error creating shipment: ry [MongooseError]: Operation `shipments.insertOne()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:39 AM [express] POST /api/shipments 500 in 10003ms :: {"error":"Failed to create shipment"}
+Error fetching shipments: ry [MongooseError]: Operation `shipments.find()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:44 AM [express] GET /api/shipments 500 in 10002ms :: {"error":"Failed to fetch shipments"}
+Error fetching contacts: ry [MongooseError]: Operation `contacts.find()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:44 AM [express] GET /api/contacts 500 in 10002ms :: {"error":"Failed to fetch contacts"}
+Error fetching notes: ry [MongooseError]: Operation `notes.find()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:44 AM [express] GET /api/notes 500 in 10002ms :: {"error":"Failed to fetch notes"}
+Error creating shipment: ry [MongooseError]: Operation `shipments.insertOne()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:47 AM [express] POST /api/shipments 500 in 10004ms :: {"error":"Failed to create shipment"}
+Error creating shipment: ry [MongooseError]: Operation `shipments.insertOne()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:47 AM [express] POST /api/shipments 500 in 10004ms :: {"error":"Failed to create shipment"}
+Error creating shipment: ry [MongooseError]: Operation `shipments.insertOne()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:47 AM [express] POST /api/shipments 500 in 10003ms :: {"error":"Failed to create shipment"}
+Error creating shipment: ry [MongooseError]: Operation `shipments.insertOne()` buffering timed out after 10000ms
+    at Timeout._onTimeout (/opt/render/project/src/dist/index.cjs:70:643975)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+7:48:47 AM [express] POST /api/shipments 500 in 10002ms :: {"error":"Failed to create shipment"}
