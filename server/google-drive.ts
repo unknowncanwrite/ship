@@ -68,6 +68,7 @@ export async function uploadFileToDrive(
   
   const fileMetadata = {
     name: fileName,
+    parents: process.env.GOOGLE_DRIVE_FOLDER_ID ? [process.env.GOOGLE_DRIVE_FOLDER_ID] : [],
   };
 
   const buffer = Buffer.from(fileContent, 'base64');
