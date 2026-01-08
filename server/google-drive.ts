@@ -66,10 +66,19 @@ export async function uploadFileToDrive(
 ): Promise<{ id: string; name: string; webViewLink: string }> {
   const drive = await getGoogleDriveClient();
   
-  const fileMetadata = {
+  const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+  
+  if (!folderId && process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
+    throw new Error('GOOGLE_DRIVE_FOLDER_ID is required when using a Service Account. Service Accounts cannot upload files without specifying a shared folder.');
+  }
+  
+  const fileMetadata: any = {
     name: fileName,
-    parents: process.env.GOOGLE_DRIVE_FOLDER_ID ? [process.env.GOOGLE_DRIVE_FOLDER_ID] : [],
   };
+  
+  if (folderId) {
+    fileMetadata.parents = [folderId];
+  }
 
   const buffer = Buffer.from(fileContent, 'base64');
   const media = {
