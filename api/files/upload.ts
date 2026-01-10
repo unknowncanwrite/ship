@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { uploadFile } from '../lib/file-storage.js';
+import { uploadFile } from '../../lib/file-storage.js';
 
 export const config = {
   api: {

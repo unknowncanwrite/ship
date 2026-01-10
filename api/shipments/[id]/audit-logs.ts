@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db } from '../../lib/db.js';
+import { db } from '../../../lib/db.js';
 import { auditLogs } from '../../../shared/schema.js';
 import { eq, desc } from 'drizzle-orm';
 
