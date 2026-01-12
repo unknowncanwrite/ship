@@ -187,7 +187,7 @@ export default function PhaseSection({
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-4 w-4 opacity-0 group-hover:opacity-100 text-destructive p-0"
+                                  className="h-4 w-4 md:opacity-0 md:group-hover:opacity-100 text-destructive p-0"
                                   onClick={() => remarksData.onDelete(item.id)}
                                 >
                                   <X className="h-3 w-3" />
@@ -220,7 +220,24 @@ export default function PhaseSection({
                       </div>
                     )}
 
-
+                    {task.id === 'p3a_sgs_docs' && (
+                      <div className="text-xs mt-2">
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            id={`${task.id}-attachment-confirm`}
+                            checked={!!checklistState[`${task.id}_subtask_confirm`]}
+                            onCheckedChange={(checked) => task.onSubTaskToggle?.(task.id, 999, !!checked)} // Using 999 for special confirm
+                            className="h-4 w-4"
+                          />
+                          <Label
+                            htmlFor={`${task.id}-attachment-confirm`}
+                            className="text-xs font-medium cursor-pointer text-muted-foreground"
+                          >
+                            CONFIRM ATTACHEMENT: Health Cert, Fumigation Cert, CI, PL, Declaration of Origin, Used Clothing & Shoes Undertakings
+                          </Label>
+                        </div>
+                      </div>
+                    )}
 
                     {task.id !== 'p4_final_bl' && task.subTasks && task.subTasks.length > 0 && (
                       <div className="text-xs mt-2 ml-0 space-y-1">
