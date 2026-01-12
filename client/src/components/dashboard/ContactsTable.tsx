@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Trash2, Plus, ArrowUpDown, Loader2 } from 'lucide-react';
+import { Trash2, Plus, ArrowUpDown, Loader2, X } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useContacts, useCreateContact, useUpdateContact, useDeleteContact } from '@/hooks/useContacts';
 
@@ -81,15 +81,26 @@ export default function ContactsTable({ open, onOpenChange }: ContactsTableProps
         <SheetHeader className="border-b px-6 py-4 sticky top-0 bg-background">
           <div className="flex items-center justify-between w-full">
             <SheetTitle>Contacts</SheetTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={() => setSortAsc(!sortAsc)}
-              title="Sort by name"
-            >
-              <ArrowUpDown className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 md:hidden"
+                onClick={() => onOpenChange(false)}
+                title="Close"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={() => setSortAsc(!sortAsc)}
+                title="Sort by name"
+              >
+                <ArrowUpDown className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </SheetHeader>
 
