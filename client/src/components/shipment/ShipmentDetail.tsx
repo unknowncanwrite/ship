@@ -811,7 +811,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="h-8 w-8 text-destructive md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                           onClick={() => deleteCustomTask(currentShipment.id, task.id)}
                         >
                           <X className="h-4 w-4" />
@@ -868,7 +868,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 text-destructive opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                        className="h-6 w-6 text-destructive md:opacity-0 md:group-hover:opacity-100 transition-opacity flex-shrink-0"
                         onClick={() => deleteShipmentChecklistItem(currentShipment.id, item.id)}
                       >
                         <X className="h-3 w-3" />
@@ -950,7 +950,7 @@ function ShipmentDetailContent({ currentShipment: inputShipment }: { currentShip
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 text-destructive flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="h-6 w-6 text-destructive flex-shrink-0 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                         onClick={() => {
                           deleteDocument(currentShipment.id, doc.id);
                           toast({
