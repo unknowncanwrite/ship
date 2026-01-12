@@ -78,7 +78,7 @@ export default function NotesTable({ open, onOpenChange }: NotesTableProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-[60vw] md:w-[50vw] max-w-2xl flex flex-col p-0">
+      <SheetContent side="right" className="w-[100vw] md:w-[50vw] max-w-2xl flex flex-col p-0">
         <SheetHeader className="border-b px-6 py-4 sticky top-0 bg-background">
           <div className="flex items-center justify-between w-full">
             <SheetTitle>Notes</SheetTitle>
