@@ -19,9 +19,7 @@ export default function Dashboard() {
   const { data: shipments = [], isLoading } = useShipments();
   const createShipment = useCreateShipment();
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('date');
-  const [filterType, setFilterType] = useState('invoice');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('invoice');
   const [_, setLocation] = useLocation();
   const [newId, setNewId] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -31,31 +29,12 @@ export default function Dashboard() {
   const filteredShipments = shipments
     .filter((s) => {
       const searchLower = searchTerm.toLowerCase();
-      
-      // Status filtering
-      if (statusFilter === 'active' && calculateProgress(s as any) === 100) return false;
-      if (statusFilter === 'completed' && calculateProgress(s as any) < 100) return false;
-
-      // Text search filtering based on filterType
-      if (!searchLower) return true;
-
-      switch (filterType) {
-        case 'invoice':
-          return s.id.toLowerCase().includes(searchLower);
-        case 'customer':
-          return s.details.customer?.toLowerCase().includes(searchLower);
-        case 'container':
-          return s.details.container?.toLowerCase().includes(searchLower);
-        case 'booking':
-          return s.details.booking?.toLowerCase().includes(searchLower);
-        default: // 'all'
-          return (
-            s.id.toLowerCase().includes(searchLower) ||
-            (s.details.customer && s.details.customer.toLowerCase().includes(searchLower)) ||
-            (s.details.container && s.details.container.toLowerCase().includes(searchLower)) ||
-            (s.details.booking && s.details.booking.toLowerCase().includes(searchLower))
-          );
-      }
+      return (
+        s.id.toLowerCase().includes(searchLower) ||
+        (s.details.customer && s.details.customer.toLowerCase().includes(searchLower)) ||
+        (s.details.container && s.details.container.toLowerCase().includes(searchLower)) ||
+        (s.details.booking && s.details.booking.toLowerCase().includes(searchLower))
+      );
     })
     .sort((a, b) => {
       if (sortBy === 'date') return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
@@ -97,16 +76,6 @@ export default function Dashboard() {
     pending: shipments.filter(s => calculateProgress(s as any) < 100).length,
   };
 
-  const getSearchPlaceholder = () => {
-    switch (filterType) {
-      case 'invoice': return 'Search by Invoice ID...';
-      case 'customer': return 'Search by Customer Name...';
-      case 'container': return 'Search by Container Number...';
-      case 'booking': return 'Search by Booking Ref...';
-      default: return 'Search all fields...';
-    }
-  };
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -120,44 +89,44 @@ export default function Dashboard() {
               Shipment Manager
             </h1>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-accent hover:bg-accent/90 text-white shadow-md transition-all hover:-translate-y-0.5">
-                <Plus className="mr-2 h-4 w-4" /> New Shipment
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New Shipment</DialogTitle>
-                <DialogDescription>
-                  Enter the unique Invoice ID for the new shipment.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="invoice-id" className="text-right">
-                    Invoice ID
-                  </Label>
-                  <Input
-                    id="invoice-id"
-                    value={newId}
-                    onChange={(e) => setNewId(e.target.value)}
-                    className="col-span-3 uppercase font-mono"
-                    placeholder="INV-..."
-                  />
+              <DialogTrigger asChild>
+                <Button className="bg-accent hover:bg-accent/90 text-white shadow-md transition-all hover:-translate-y-0.5">
+                  <Plus className="mr-2 h-4 w-4" /> New Shipment
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New Shipment</DialogTitle>
+                  <DialogDescription>
+                    Enter the unique Invoice ID for the new shipment.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="invoice-id" className="text-right">
+                      Invoice ID
+                    </Label>
+                    <Input
+                      id="invoice-id"
+                      value={newId}
+                      onChange={(e) => setNewId(e.target.value)}
+                      className="col-span-3 uppercase font-mono"
+                      placeholder="INV-..."
+                    />
+                  </div>
                 </div>
-              </div>
-              <DialogFooter>
-                <Button onClick={handleCreate}>Create</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+                <DialogFooter>
+                  <Button onClick={handleCreate}>Create</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </header>
@@ -197,66 +166,34 @@ export default function Dashboard() {
         {/* Main Content */}
         <div className="space-y-6">
           {/* Filters & Controls */}
-          <div className="flex flex-col gap-4 bg-card p-4 rounded-lg border border-border shadow-sm">
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-              
-              {/* Filter Type & Search Group */}
-              <div className="flex w-full sm:flex-1 gap-2">
-                 <Select value={filterType} onValueChange={setFilterType}>
-                  <SelectTrigger className="w-[140px] shrink-0">
-                    <SelectValue placeholder="Filter By" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="invoice">Invoice ID</SelectItem>
-                    <SelectItem value="customer">Customer</SelectItem>
-                    <SelectItem value="container">Container</SelectItem>
-                    <SelectItem value="booking">Booking</SelectItem>
-                    <SelectItem value="all">All Fields</SelectItem>
-                  </SelectContent>
-                </Select>
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-card p-4 rounded-lg border border-border shadow-sm">
+            <div className="relative w-full sm:w-96">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by ID, Customer, Container, Booking..."
+                className="pl-9 bg-background border-border"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
 
-                <div className="relative w-full">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    placeholder={getSearchPlaceholder()}
-                    className="pl-9 bg-background border-border w-full"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* Status & Sort Group */}
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full sm:w-[130px]">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-full sm:w-[160px]">
-                    <div className="flex items-center gap-2">
-                      <Filter className="h-4 w-4 text-muted-foreground" />
-                      <SelectValue placeholder="Sort by" />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="date">Date Created</SelectItem>
-                    <SelectItem value="invoice">Invoice ID</SelectItem>
-                    <SelectItem value="customer">Customer Name</SelectItem>
-                    <SelectItem value="container">Container Number</SelectItem>
-                    <SelectItem value="progress">Progress %</SelectItem>
-                    <SelectItem value="status">Status (Active First)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4 text-muted-foreground" />
+                    <SelectValue placeholder="Sort by" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date">Date Created</SelectItem>
+                  <SelectItem value="invoice">Invoice ID</SelectItem>
+                  <SelectItem value="customer">Customer Name</SelectItem>
+                  <SelectItem value="container">Container Number</SelectItem>
+                  <SelectItem value="progress">Progress %</SelectItem>
+                  <SelectItem value="status">Status (Active First)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
